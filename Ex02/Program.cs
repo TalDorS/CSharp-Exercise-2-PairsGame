@@ -10,7 +10,8 @@ namespace Ex02
     {
         public static void Main()
         {
-            Console.WriteLine("Hello World");
+            PairsGame game = new PairsGame();
+            game.RunGame();
         }
     }
 }
