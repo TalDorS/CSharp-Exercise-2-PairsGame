@@ -12,7 +12,8 @@ namespace Ex02
         private const string k_PVCModeInput = "2";
         private const int k_MinBoardHeightAndWidth = 4;
         private const int k_MaxBoardHeightAndWidth = 6;
-
+        private const char k_FirstColoumnLetter = 'A';
+        //Board m_Board { get; set; }
         // Ask for the player's name, and check input integrity
         public static string GetPlayerName()
         {
@@ -108,6 +109,46 @@ namespace Ex02
             }
 
             return isValid;
+        }
+
+        public static void PrintBoard(Board i_Board)
+        {
+            Console.Write("  "); // For row numbers alignment
+            // Printing the top line of letters
+            for (int i = 0; i < i_Board.BoardWidth; i++)
+            {
+                char columnLetter = (char)(k_FirstColoumnLetter + i);
+                Console.Write("  " + columnLetter + " ");
+            }
+
+            Console.Write(Environment.NewLine);
+            Console.Write("  ");
+            for (int i = 0; i < i_Board.BoardWidth; i++)
+            {
+                Console.Write("====");
+            }
+
+            Console.Write(Environment.NewLine);
+
+            for (int i = 0; i < i_Board.BoardHeight; i++)
+            {
+                Console.Write(i + 1);
+
+                for (int j = 0; j <= i_Board.BoardWidth; j++)
+                {
+                    Console.Write(" |  ");
+                }
+
+                Console.Write(Environment.NewLine);
+                Console.Write("  ");
+                for (int j = 0; j < i_Board.BoardWidth; j++)
+                {
+                    Console.Write("====");
+                }
+
+                Console.Write(Environment.NewLine);
+            }
+
         }
     }
 }

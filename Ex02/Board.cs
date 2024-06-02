@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Ex02
 {
-    internal class Board
+    public class Board
     {
         private MatrixCell[,] m_Board;
         private int m_BoardHeight;
@@ -23,7 +23,16 @@ namespace Ex02
             m_Board = new MatrixCell[i_BoardHeight, i_BoardWidth];
 
         }
-
+        // Get board height
+        public int BoardHeight
+        {
+            get { return m_BoardHeight; }
+        }
+        // Get board width
+        public int BoardWidth
+        {
+            get { return m_BoardWidth; }
+        }
         // This board initializes the board cells
         private void initializeBoard()
         {

@@ -23,7 +23,7 @@ namespace Ex02
         {
             int boardHeight;
             int boardWidth;
-
+            
             // Ask the first player for his name
             m_FirstPlayerName = IO.GetPlayerName();
 
@@ -36,7 +36,11 @@ namespace Ex02
             // Get height and width of board
             IO.GetBoardHeightAndWidth(out boardHeight, out boardWidth);
 
+            //for checking print board function:
             // Create new game board
+            //Board board= new Board(boardHeight, boardWidth); ;
+            // Print game board
+            //IO.PrintBoard(board);
 
         }
     }
