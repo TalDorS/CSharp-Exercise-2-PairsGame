@@ -13,7 +13,6 @@ namespace Ex02
         private const int k_MinBoardHeightAndWidth = 4;
         private const int k_MaxBoardHeightAndWidth = 6;
         private const char k_FirstColoumnLetter = 'A';
-        //Board m_Board { get; set; }
         // Ask for the player's name, and check input integrity
         public static string GetPlayerName()
         {
