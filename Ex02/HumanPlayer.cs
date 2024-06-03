@@ -29,19 +29,21 @@ namespace Ex02
             set { m_Name = value; }
         } 
 
-        public MatrixCell MakeSingleTurn(Board io_Board, out string KeyPressed)
+        private MatrixCell makeSingleTurn(Board io_Board, out string io_KeyPressed)
         {
             MatrixCell cellValue;
             do  // To ensure we dont choose a visible cell
             {
-                KeyPressed = IO.GetCell(io_Board.BoardHeight, io_Board.BoardWidth);
-                cellValue = io_Board.SetCellToVisibleOnBoardAndGetCellValue(KeyPressed);
+                io_KeyPressed = IO.GetCell(io_Board.BoardHeight, io_Board.BoardWidth);
+                cellValue = io_Board.SetCellToVisibleOnBoardAndGetCellValue(io_KeyPressed);
+
                 if (cellValue.IsVisible)
                 {
                     Console.WriteLine("You chose a visible cell. Choose a different cell.");
                 }
 
             } while (cellValue.IsVisible);
+
             Ex02.ConsoleUtils.Screen.Clear();// Clear the screen before getting the cell
             IO.PrintBoard(io_Board);
 
@@ -49,13 +51,14 @@ namespace Ex02
         }
         public bool MakeTurn(Board io_Board)
         {
-            char? firstChoiceCellValue = MakeSingleTurn(io_Board,out string KeyPressed1).Char; // First choice for the human player
+            char? firstChoiceCellValue = makeSingleTurn(io_Board,out string KeyPressed1).Char; // First choice for the human player
             char? secondChoiceCellValue;
             string KeyPressed2;
             bool didSucceedTurn = false; // To check if player wins round
+
             do
             {
-                secondChoiceCellValue = MakeSingleTurn(io_Board, out KeyPressed2).Char; // Second choice for the human player
+                secondChoiceCellValue = makeSingleTurn(io_Board, out KeyPressed2).Char; // Second choice for the human player
                 if (KeyPressed2 == KeyPressed1)
                 {
                     Console.WriteLine("You chose the same cell again. Choose a different cell.");
@@ -76,6 +79,7 @@ namespace Ex02
                 io_Board.NumOfPairs--;          // The number of pairs 
                 didSucceedTurn = true;// We want the player to play again in the next round
             }
+
             return didSucceedTurn;
         }
     }

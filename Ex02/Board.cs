@@ -85,7 +85,7 @@ namespace Ex02
         public MatrixCell SetCellToVisibleOnBoardAndGetCellValue(string i_KeyPressed)
         {
             int cellColoum = i_KeyPressed[0] - k_ConvertCharLetterToNumber;           // Get the cell coloum
-            int cellRow = i_KeyPressed[1] - k_ConvertCharIntegerToNumber - 1;                                     // Get the cell row
+            int cellRow = i_KeyPressed[1] - k_ConvertCharIntegerToNumber - 1;         // Get the cell row
             MatrixCell cellValue = m_Board[cellRow, cellColoum];  //  Save the char of the cell
             m_Board[cellRow, cellColoum].IsVisible = true;     //  update the cell to be exposed
 
