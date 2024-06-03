@@ -21,18 +21,27 @@ namespace Ex02
 
             // Initialize board cells
             m_Board = new MatrixCell[i_BoardHeight, i_BoardWidth];
-
+            initializeBoard();
         }
+
+        // Properties of matrix cell
+        public MatrixCell[,] BoardMatrix
+        {
+            get { return m_Board; }
+        }
+
         // Get board height
         public int BoardHeight
         {
             get { return m_BoardHeight; }
         }
+
         // Get board width
         public int BoardWidth
         {
             get { return m_BoardWidth; }
         }
+
         // This board initializes the board cells
         private void initializeBoard()
         {
@@ -53,6 +62,7 @@ namespace Ex02
                     colsToPlaceCharAt[0] = rnd.Next(0, m_BoardWidth);
                     colsToPlaceCharAt[1] = rnd.Next(0, m_BoardWidth);
                 } while (m_Board[rowsToPlaceCharAt[0], colsToPlaceCharAt[0]].Char != null || m_Board[rowsToPlaceCharAt[1], colsToPlaceCharAt[1]].Char != null);
+               
                 m_Board[rowsToPlaceCharAt[0], colsToPlaceCharAt[0]].Char = allowedChars[i];
                 m_Board[rowsToPlaceCharAt[1], colsToPlaceCharAt[1]].Char = allowedChars[i];
             }

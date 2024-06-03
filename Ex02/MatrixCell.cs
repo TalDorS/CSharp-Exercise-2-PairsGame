@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Ex02
 {
-    internal struct MatrixCell
+    public struct MatrixCell
     {
         private char? m_Char;
         private bool m_IsVisible;

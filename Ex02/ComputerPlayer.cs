@@ -6,7 +6,14 @@ using System.Threading.Tasks;
 
 namespace Ex02
 {
-    internal class ComputerPlayer
+    public class ComputerPlayer
     {
+        private int m_Points;
+
+        public int Points
+        {
+            get { return m_Points; }
+            set { m_Points = value; }
+        }
     }
 }
