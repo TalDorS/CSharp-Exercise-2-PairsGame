@@ -15,6 +15,7 @@ namespace Ex02
         private Board m_GameBoard;
         private eGameMode m_GameMode;
 
+
         public enum eGameMode
         {
             PlayerVsPlayer,
@@ -34,10 +35,42 @@ namespace Ex02
         // This function has the main game loop
         public void StartGameLoop()
         {
-            while (true)
-            {
+            bool isChangedPlayer = false;
+            bool isFirstPlayerTurn = true;
 
+            while ( m_GameBoard.NumOfPairs != 0)
+            {
+                if (isFirstPlayerTurn)
+                {
+                    // add here a print maybe to announce its player 1 turn
+                    isChangedPlayer = m_FirstPlayer.MakeTurn(m_GameBoard);
+                    if (!isChangedPlayer)
+                    {
+                        isFirstPlayerTurn = false;
+                    }
+                }
+                else
+                {
+                    // add here a print maybe to announce its player 2 turn
+                    if (m_GameMode == eGameMode.PlayerVsPlayer)
+                    {
+                        isChangedPlayer = m_SecondPlayer.MakeTurn(m_GameBoard);
+                        if (!isChangedPlayer)
+                        {
+                            isFirstPlayerTurn = true;
+                        }
+                    }
+                    else
+                    {
+                        isChangedPlayer = m_ComputerPlayer.MakeTurn(m_GameBoard);
+                        if (!isChangedPlayer)
+                        {
+                            isFirstPlayerTurn = true;
+                        }
+                    }
+                }
             }
+
         }
 
         // This function initializes the players, game mode and the board
@@ -71,6 +104,7 @@ namespace Ex02
 
             // Create new game board
             m_GameBoard = new Board(boardHeight, boardWidth);
+
         }
     }
 }

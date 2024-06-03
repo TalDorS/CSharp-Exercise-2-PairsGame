@@ -12,6 +12,10 @@ namespace Ex02
         private int m_BoardHeight;
         private int m_BoardWidth;
         private int m_NumOfPairs;
+        private const char k_ConvertCharLetterToNumber = 'A';
+        private const char k_ConvertCharIntegerToNumber = '0';
+
+
         // Board CTOR 
         public Board(int i_BoardHeight, int i_BoardWidth)
         {
@@ -77,6 +81,21 @@ namespace Ex02
                 m_Board[rowsToPlaceCharAt[0], colsToPlaceCharAt[0]].Char = allowedChars[i];
                 m_Board[rowsToPlaceCharAt[1], colsToPlaceCharAt[1]].Char = allowedChars[i];
             }
+        }
+        public MatrixCell SetCellToVisibleOnBoardAndGetCellValue(string i_KeyPressed)
+        {
+            int cellColoum = i_KeyPressed[0] - k_ConvertCharLetterToNumber;           // Get the cell coloum
+            int cellRow = i_KeyPressed[1] - k_ConvertCharIntegerToNumber - 1;                                     // Get the cell row
+            MatrixCell cellValue = m_Board[cellRow, cellColoum];  //  Save the char of the cell
+            m_Board[cellRow, cellColoum].IsVisible = true;     //  update the cell to be exposed
+
+            return cellValue;
+        }
+        public void SetCellToInvisibleOnBoard(string i_KeyPressed)
+        {
+            int cellColoum = i_KeyPressed[0] - k_ConvertCharLetterToNumber;           // Get the cell coloum
+            int cellRow = i_KeyPressed[1] - k_ConvertCharIntegerToNumber - 1;                                     // Get the cell row (its the line -1 in the matrix)
+            m_Board[cellRow, cellColoum].IsVisible = false;
         }
     }
 }

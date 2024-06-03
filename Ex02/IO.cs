@@ -17,6 +17,8 @@ namespace Ex02
         private const int k_AllowedCellInputLength = 2;
         private const char k_FirstColoumnLetter = 'A';
         private const char k_FirstRowDigit = '1';
+        private const string k_ExitGame = "Q";
+
 
         // Ask for the player's name, and check input integrity
         public static string GetPlayerName()
@@ -41,7 +43,7 @@ namespace Ex02
 
             do
             {
-                Console.WriteLine("Please enter desired mod");
+                Console.WriteLine("Please enter desired mode");
                 Console.WriteLine("Press 1 for PVP");
                 Console.WriteLine("Press 2 for PVC");
                 chosenMod = Console.ReadLine();
@@ -59,6 +61,7 @@ namespace Ex02
             {
                 playerName = IO.GetPlayerName();
             }
+
 
             return playerName;
         }
@@ -199,9 +202,14 @@ namespace Ex02
             {
                 Console.WriteLine("Please enter cell (ex. B4)");
                 chosenCell = Console.ReadLine();
+
+                if(chosenCell.ToUpper() == k_ExitGame)      // Exit game if Q is pressed
+                {
+                    Environment.Exit(1);
+                }
+
             } while (!checkCellInputValidity(chosenCell, i_BoardHeight, i_BoardWidth));
 
-            Ex02.ConsoleUtils.Screen.Clear();// Clear the screen after finished getting the cell
             return chosenCell;
         }
 
