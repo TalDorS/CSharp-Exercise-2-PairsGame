@@ -54,7 +54,7 @@ namespace Ex02
         public static string GetSecondPlayerName(PairsGame.eGameMode i_ChosenMode)
         {
             string playerName = null;
-
+            
             if (i_ChosenMode == eGameMode.PlayerVsPlayer)
             {
                 playerName = IO.GetPlayerName();
