@@ -69,7 +69,6 @@ namespace Ex02
             // Get height and width of board
             IO.GetBoardHeightAndWidth(out boardHeight, out boardWidth);
 
-            //for checking print board function:
             // Create new game board
             m_GameBoard = new Board(boardHeight, boardWidth);
         }

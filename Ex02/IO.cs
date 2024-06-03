@@ -54,7 +54,7 @@ namespace Ex02
         public static string GetSecondPlayerName(PairsGame.eGameMode i_ChosenMode)
         {
             string playerName = null;
-            
+
             if (i_ChosenMode == eGameMode.PlayerVsPlayer)
             {
                 playerName = IO.GetPlayerName();
@@ -112,12 +112,12 @@ namespace Ex02
             bool secondParse = int.TryParse(i_WidthInput, out o_BoardWidth);
 
             // Check if both parses were successful, and act accordingly   
-            if(firstParse && secondParse)
+            if (firstParse && secondParse)
             {
-                if(o_BoardHeight >= k_MinBoardHeightAndWidth && o_BoardHeight <= k_MaxBoardHeightAndWidth && o_BoardWidth >= k_MinBoardHeightAndWidth && o_BoardWidth <= k_MaxBoardHeightAndWidth)
+                if (o_BoardHeight >= k_MinBoardHeightAndWidth && o_BoardHeight <= k_MaxBoardHeightAndWidth && o_BoardWidth >= k_MinBoardHeightAndWidth && o_BoardWidth <= k_MaxBoardHeightAndWidth)
                 {
                     // Check if even amount of cells in board
-                    if((o_BoardHeight * o_BoardWidth) % 2 == 0)
+                    if ((o_BoardHeight * o_BoardWidth) % 2 == 0)
                     {
                         isValid = true;
                     }
@@ -130,7 +130,8 @@ namespace Ex02
                 {
                     Console.WriteLine("Board's height or width input is invalid!");
                 }
-            } else
+            }
+            else
             {
                 Console.WriteLine("Board's height or width input is invalid!");
             }
@@ -200,6 +201,7 @@ namespace Ex02
                 chosenCell = Console.ReadLine();
             } while (!checkCellInputValidity(chosenCell, i_BoardHeight, i_BoardWidth));
 
+            Ex02.ConsoleUtils.Screen.Clear();// Clear the screen after finished getting the cell
             return chosenCell;
         }
 

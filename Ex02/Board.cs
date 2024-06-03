@@ -11,7 +11,7 @@ namespace Ex02
         private MatrixCell[,] m_Board;
         private int m_BoardHeight;
         private int m_BoardWidth;
-
+        private int m_NumOfPairs;
         // Board CTOR 
         public Board(int i_BoardHeight, int i_BoardWidth)
         {
@@ -23,7 +23,18 @@ namespace Ex02
             m_Board = new MatrixCell[i_BoardHeight, i_BoardWidth];
             initializeBoard();
         }
-
+        public int NumOfPairs 
+        {  
+            get 
+            { 
+                return m_NumOfPairs;
+            } 
+            set 
+            {
+                m_NumOfPairs= value;
+            } 
+        }
+          
         // Properties of matrix cell
         public MatrixCell[,] BoardMatrix
         {
@@ -46,13 +57,13 @@ namespace Ex02
         private void initializeBoard()
         {
             Random rnd = new Random();
-            char[] allowedChars = { 'I', 'J', 'K', 'L', 'M', 'N' , 'O' , 'P' , 'Q' , 'R' , 'S' , 'T' , 'U' , 'V' , 'W' , 'X' , 'Y' , 'Z' };
-            int amountOfCharsUsed = (m_BoardHeight * m_BoardWidth) / 2;
+            char[] allowedChars = { 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
+            m_NumOfPairs = (m_BoardHeight * m_BoardWidth) / 2;
             int[] rowsToPlaceCharAt = new int[2];
             int[] colsToPlaceCharAt = new int[2];
 
             // Iterate through the amount of words we can use, and randomly find a cell for them
-            for (int i = 0; i < amountOfCharsUsed; i++)
+            for (int i = 0; i < m_NumOfPairs; i++)
             {
                 do
                 {
@@ -62,7 +73,7 @@ namespace Ex02
                     colsToPlaceCharAt[0] = rnd.Next(0, m_BoardWidth);
                     colsToPlaceCharAt[1] = rnd.Next(0, m_BoardWidth);
                 } while (m_Board[rowsToPlaceCharAt[0], colsToPlaceCharAt[0]].Char != null || m_Board[rowsToPlaceCharAt[1], colsToPlaceCharAt[1]].Char != null);
-               
+
                 m_Board[rowsToPlaceCharAt[0], colsToPlaceCharAt[0]].Char = allowedChars[i];
                 m_Board[rowsToPlaceCharAt[1], colsToPlaceCharAt[1]].Char = allowedChars[i];
             }

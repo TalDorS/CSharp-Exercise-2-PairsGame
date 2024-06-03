@@ -11,7 +11,7 @@ namespace Ex02
         private char? m_Char;
         private bool m_IsVisible;
 
-        public char? Char 
+        public char? Char
         {
             get
             {
