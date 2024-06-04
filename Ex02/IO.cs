@@ -10,6 +10,7 @@ namespace Ex02
 {
     public class IO
     {
+        private const int k_TwoSeconds = 2000;
         private const string k_PVPModeInput = "1";
         private const string k_PVCModeInput = "2";
         private const string k_YChar = "Y";
@@ -21,7 +22,6 @@ namespace Ex02
         public const char k_FirstRowDigit = '1';
         public const char k_ZeroDigit = '0';
         private const string k_ExitGame = "Q";
-
 
         // Ask for the player's name, and check input integrity
         public static string GetPlayerName(string currentPlayer)
@@ -80,12 +80,12 @@ namespace Ex02
         }
 
         // Get board's height and width from user
-        public static void GetBoardHeightAndWidth(out int o_BoardHeight, out int o_BoardWidth)
+        public static void GetBoardHeightAndWidth(out int io_BoardHeight, out int io_BoardWidth)
         {
             string heightInput = null;
             string widthInput = null;
-            o_BoardHeight = 0;
-            o_BoardWidth = 0;
+            io_BoardHeight = 0;
+            io_BoardWidth = 0;
 
             do
             {
@@ -93,92 +93,96 @@ namespace Ex02
                 heightInput = Console.ReadLine();
                 Console.WriteLine("Please enter board width");
                 widthInput = Console.ReadLine();
-            } while (!checkBoardHeightAndWidthValidity(heightInput, widthInput, out o_BoardHeight, out o_BoardWidth));
+            } while (!checkBoardHeightAndWidthValidity(heightInput, widthInput, out io_BoardHeight, out io_BoardWidth));
         }
 
         // Check board height and width input for validity
-        private static bool checkBoardHeightAndWidthValidity(string i_HeightInput, string i_WidthInput, out int o_BoardHeight, out int o_BoardWidth)
+        private static bool checkBoardHeightAndWidthValidity(string i_HeightInput, string i_WidthInput, out int io_BoardHeight, out int io_BoardWidth)
         {
             bool isValid = false;
-            bool firstParse = int.TryParse(i_HeightInput, out o_BoardHeight);
-            bool secondParse = int.TryParse(i_WidthInput, out o_BoardWidth);
-           
-            // Check if both parses were successful, and act accordingly   
-            if (firstParse && secondParse)
+            bool firstParse = int.TryParse(i_HeightInput, out io_BoardHeight);
+            bool secondParse = int.TryParse(i_WidthInput, out io_BoardWidth);
+
+            if (!firstParse || !secondParse)
             {
-                if (o_BoardHeight >= k_MinBoardHeightAndWidth && o_BoardHeight <= k_MaxBoardHeightAndWidth && o_BoardWidth >= k_MinBoardHeightAndWidth && o_BoardWidth <= k_MaxBoardHeightAndWidth)
-                {
-                    // Check if even amount of cells in board
-                    if (Board.BoardHasEvenNumberOfCells(o_BoardHeight, o_BoardWidth))
-                    {
-                        isValid = true;
-                    }
-                    else
-                    {
-                        Console.WriteLine("Odd amount of cells in board is not allowed!");
-                    }
-                }
-                else
-                {
-                    Console.WriteLine("Board's height or width input is invalid!");
-                }
+                Console.WriteLine("Inputs me be numbers!");
+            } 
+            else if (io_BoardHeight < k_MinBoardHeightAndWidth || io_BoardHeight > k_MaxBoardHeightAndWidth || io_BoardWidth < k_MinBoardHeightAndWidth || io_BoardWidth > k_MaxBoardHeightAndWidth)
+            {
+                Console.WriteLine("Board's height or width input is invalid!");
+            }
+            else if (!Board.checkIfBoardHasEvenNumberOfCells(io_BoardHeight, io_BoardWidth)) 
+            {
+                Console.WriteLine("Odd amount of cells in board is not allowed!");
             }
             else
             {
-                Console.WriteLine("Board's height or width input is invalid!");
+                isValid = true;
             }
 
             return isValid;
         }
 
-        // TODO: MAKE PRETTIER CODE
         public static void PrintBoard(Board i_Board)
         {
+            printColumnHeaders(i_Board.BoardWidth);
+            printHorizontalSeparator(i_Board.BoardWidth);
+
+            for (int i = 0; i < i_Board.BoardHeight; i++)
+            {
+                printRow(i_Board, i);
+                printHorizontalSeparator(i_Board.BoardWidth);
+            }
+        }
+
+        // This is a utility function for PrintBoard
+        private static void printColumnHeaders(int i_BoardWidth)
+        {
             Console.Write("  "); // For row numbers alignment
-            // Printing the top line of letters
-            for (int i = 0; i < i_Board.BoardWidth; i++)
+
+            for (int i = 0; i < i_BoardWidth; i++)
             {
                 char columnLetter = (char)(k_FirstColoumnLetter + i);
-                Console.Write("  " + columnLetter + " ");
+                Console.Write($"  {columnLetter} ");
             }
 
-            Console.Write(Environment.NewLine);
+            Console.WriteLine();
+        }
+
+        // This is a utility function for PrintBoard
+        private static void printHorizontalSeparator(int i_BoardWidth)
+        {
             Console.Write("  ");
-            for (int i = 0; i < i_Board.BoardWidth; i++)
+
+            for (int i = 0; i < i_BoardWidth; i++)
             {
                 Console.Write("====");
             }
 
-            Console.Write(Environment.NewLine);
+            Console.Write("=");
+            Console.WriteLine();
+        }
 
-            for (int i = 0; i < i_Board.BoardHeight; i++)
+        // This is a utility function for PrintBoard
+        private static void printRow(Board i_Board, int i_RowIndex)
+        {
+            Console.Write(i_RowIndex + 1);
+
+            for (int j = 0; j < i_Board.BoardWidth; j++)
             {
-                Console.Write(i + 1);
-
-                for (int j = 0; j < i_Board.BoardWidth; j++)
+                Console.Write(" | ");
+                if (i_Board.BoardMatrix[i_RowIndex, j].IsVisible)
                 {
-                    if (i_Board.BoardMatrix[i, j].IsVisible)
-                    {
-                        Console.Write(" | ");
-                        Console.Write(i_Board.BoardMatrix[i, j].Char);
-                    }
-                    else
-                    {
-                        Console.Write(" |  ");
-                    }
+                    Console.Write(i_Board.BoardMatrix[i_RowIndex, j].Char);
                 }
-
-                Console.Write(" |");
-                Console.Write(Environment.NewLine);
-                Console.Write("  ");
-                for (int j = 0; j < i_Board.BoardWidth; j++)
+                else
                 {
-                    Console.Write("====");
+                    Console.Write(" ");
                 }
-
-                Console.Write(Environment.NewLine);
             }
 
+            Console.Write(" |");
+            Console.WriteLine();
         }
 
         // This function asks a player for the cell he chooses
@@ -191,7 +195,7 @@ namespace Ex02
                 Console.WriteLine($"{i_CurrentPlayer.Name}, please enter cell (ex. B4)");
                 chosenCell = Console.ReadLine();
 
-                if(chosenCell.ToUpper() == k_ExitGame)      // Exit game if Q is pressed
+                if(chosenCell.ToUpper() == k_ExitGame)
                 {
                     Environment.Exit(1);
                 }
@@ -242,23 +246,14 @@ namespace Ex02
         }
 
         // This function prints the winner and final score
-        public static void PrintWinnerAndScores(Player firstPlayer, Player secondPlayer)
+        public static void PrintWinnerAndScores(Player i_FirstPlayer, Player i_SecondPlayer)
         {
-            // Clear screen
+            Player winningPlayer = i_FirstPlayer.Points > i_SecondPlayer.Points ? i_FirstPlayer : i_SecondPlayer;
+
             ClearScreen();
-            Player winnerPlayer = firstPlayer.Points > secondPlayer.Points ? firstPlayer : secondPlayer;
-
-            Console.WriteLine($"The Winner Is {winnerPlayer.Name}!");
-
-            if (secondPlayer.PlayerType == Player.ePlayerType.HumanPlayer)
-            {
-                Console.WriteLine($"{secondPlayer.Name} finished with {secondPlayer.Points} points!");
-            }
-            else
-            {
-                Console.WriteLine($"Computer player finished with {secondPlayer.Points} points!");
-            }
-            Console.WriteLine($"{firstPlayer.Name} finished with {firstPlayer.Points} points!");
+            Console.WriteLine(string.Format("The Winner Is {0}!", winningPlayer.Name));
+            Console.WriteLine(string.Format("{0} finished with {1} points!", i_FirstPlayer.Name, i_FirstPlayer.Points));
+            Console.WriteLine(string.Format("{0} finished with {1} points!", i_SecondPlayer.Name, i_SecondPlayer.Points));
         }
 
         // This function asks the player for another round
@@ -282,11 +277,11 @@ namespace Ex02
         }
 
         // This function checks the validity of the response in the function 'AskPlayerForAnotherRound'
-        private static bool validateResponse(string response)
+        private static bool validateResponse(string i_Response)
         {
             bool isValid = false;
 
-            if(response.ToUpper() == k_YChar || response.ToUpper() == k_NChar)
+            if(i_Response.ToUpper() == k_YChar || i_Response.ToUpper() == k_NChar)
             {
                 isValid = true;
             }
@@ -296,6 +291,12 @@ namespace Ex02
             }
 
             return isValid;
+        }
+
+        // This function sleeps for 2 seconds
+        public static void Sleep2Seconds()
+        {
+            System.Threading.Thread.Sleep(k_TwoSeconds);
         }
     }
 }

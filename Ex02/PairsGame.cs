@@ -12,6 +12,7 @@ namespace Ex02
     {
         private const string k_FirstPlayerMessage = "first";
         private const string k_SecondPlayerMessage = "second";
+        private const string k_ComputerPlayerName = "Computer Player";
         private Player m_FirstPlayer;
         private Player m_SecondPlayer;
         private Board m_GameBoard;
@@ -136,7 +137,7 @@ namespace Ex02
             }
             else
             {
-                m_SecondPlayer = new Player(null,Player.ePlayerType.ComputerPlayer);
+                m_SecondPlayer = new Player(k_ComputerPlayerName, Player.ePlayerType.ComputerPlayer);
             }
         }
 

@@ -8,12 +8,11 @@ namespace Ex02
 {
     public class Player
     {
-        
-        private const int k_TwoSeconds = 2000;
         private const int k_NumOfTurns = 2;
         private string m_Name;
         private int m_Points;
         private ePlayerType m_PlayerType;
+
         public enum ePlayerType
         {
             HumanPlayer,
@@ -81,7 +80,7 @@ namespace Ex02
             if (io_Board.BoardMatrix[firstCellCoordinates[0], firstCellCoordinates[1]].Char != io_Board.BoardMatrix[secondCellCoordinates[0], secondCellCoordinates[1]].Char)
             {
                 // Sleep for two seconds
-                System.Threading.Thread.Sleep(k_TwoSeconds);
+                IO.Sleep2Seconds();
 
                 // Turn first and second choices to invisible
                 io_Board.BoardMatrix[firstCellCoordinates[0], firstCellCoordinates[1]].IsVisible = false;
@@ -97,18 +96,18 @@ namespace Ex02
             return didSucceedTurn;
         }
 
-        private MatrixCell makeSingleTurnForComputerPlayer(Board io_Board, out string io_KeyPressed)
+        private MatrixCell makeSingleTurnForComputerPlayer(Board io_Board, out string o_KeyPressed)
         {
             Random rnd = new Random();
+            MatrixCell cellValue = new MatrixCell();
             char randomColumnForComputerPlayer;
             char randomRowForComputerPlayer;
-            MatrixCell cellValue = new MatrixCell(); 
 
             do
             {
                 randomColumnForComputerPlayer = (char)(IO.k_FirstColoumnLetter + rnd.Next(0, io_Board.BoardWidth));
                 randomRowForComputerPlayer = (char)(IO.k_ZeroDigit + rnd.Next(1, io_Board.BoardHeight));
-                io_KeyPressed = $"{randomColumnForComputerPlayer}{randomRowForComputerPlayer}";                         // For comparing if computer got the same cell
+                o_KeyPressed = $"{randomColumnForComputerPlayer}{randomRowForComputerPlayer}";                         // For comparing if computer got the same cell
                 cellValue = io_Board.BoardMatrix[(int)(randomRowForComputerPlayer - 1 - IO.k_ZeroDigit), (int)(randomColumnForComputerPlayer - IO.k_FirstColoumnLetter)];
             } while (cellValue.IsVisible);  // To ensure we dont choose a visible cell
 
@@ -126,16 +125,16 @@ namespace Ex02
             int cellRow = i_KeyPressed[1] - IO.k_ZeroDigit - 1;                                     // Get the cell row (its the line -1 in the matrix)
             io_Board.BoardMatrix[cellRow, cellColoum].IsVisible = false;
         }
+
         public bool MakeComputerTurn(Board io_Board)
         {
             MatrixCell firstChoiceCellValue = makeSingleTurnForComputerPlayer(io_Board, out string keyPressed1); // First choice for the human player
-            MatrixCell secondChoiceCellValue;
+            MatrixCell secondChoiceCellValue = makeSingleTurnForComputerPlayer(io_Board, out string keyPressed2);
             bool didSucceedTurn = false; // To check if player wins round
-            secondChoiceCellValue = makeSingleTurnForComputerPlayer(io_Board, out string keyPressed2);
 
             if (firstChoiceCellValue.Char != secondChoiceCellValue.Char)
             {
-                System.Threading.Thread.Sleep(k_TwoSeconds);
+                IO.Sleep2Seconds();
                 SetCellToInvisibleOnBoard(io_Board, keyPressed1);
                 SetCellToInvisibleOnBoard(io_Board, keyPressed2);
                 IO.ClearScreen();

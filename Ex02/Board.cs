@@ -14,18 +14,14 @@ namespace Ex02
         private int m_NumOfPairs;
         private const char k_ALetter = 'A';
         private const char k_ZeroLetter = '0';
-        private const int k_DividedByTwo = 2;
 
         // Board CTOR 
         public Board(int i_BoardHeight, int i_BoardWidth)
         {
-            // Assign height and width
             m_BoardHeight = i_BoardHeight;
             m_BoardWidth = i_BoardWidth;
-
-            // Initialize board cells
             m_Board = new MatrixCell[i_BoardHeight, i_BoardWidth];
-            initializeBoard();
+            initializeBoardCells();
         }
         public int NumOfPairs 
         {  
@@ -55,31 +51,40 @@ namespace Ex02
         }
 
         // This board initializes the board cells
-        private void initializeBoard()
+        private void initializeBoardCells()
         {
             Random rnd = new Random();
             char[] allowedChars = { 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
             m_NumOfPairs = (m_BoardHeight * m_BoardWidth) / 2;
-            int[] rowsToPlaceCharAt = new int[2];
-            int[] colsToPlaceCharAt = new int[2];
 
-            // Iterate through the amount of words we can use, and randomly find a cell for them
+            List<int> cellIndices = new List<int>();
+
+            // Fill the list with all possible cell indices
+            for (int i = 0; i < m_BoardHeight * m_BoardWidth; i++)
+            {
+                cellIndices.Add(i);
+            }
+
+            // Shuffle the list of cell indices
+            cellIndices = cellIndices.OrderBy(x => rnd.Next()).ToList();
+
+            // Place the characters
             for (int i = 0; i < m_NumOfPairs; i++)
             {
-                do
-                {
-                    // Generate two random cells to place the chars at
-                    rowsToPlaceCharAt[0] = rnd.Next(0, m_BoardHeight);
-                    rowsToPlaceCharAt[1] = rnd.Next(0, m_BoardHeight);
-                    colsToPlaceCharAt[0] = rnd.Next(0, m_BoardWidth);
-                    colsToPlaceCharAt[1] = rnd.Next(0, m_BoardWidth);
-                } while (!validateCells(rowsToPlaceCharAt, colsToPlaceCharAt));
+                int firstIndex = cellIndices[i * 2];
+                int secondIndex = cellIndices[i * 2 + 1];
 
-                m_Board[rowsToPlaceCharAt[0], colsToPlaceCharAt[0]].Char = allowedChars[i];
-                m_Board[rowsToPlaceCharAt[1], colsToPlaceCharAt[1]].Char = allowedChars[i];
+                int firstRow = firstIndex / m_BoardWidth;
+                int firstCol = firstIndex % m_BoardWidth;
+                int secondRow = secondIndex / m_BoardWidth;
+                int secondCol = secondIndex % m_BoardWidth;
+
+                m_Board[firstRow, firstCol].Char = allowedChars[i];
+                m_Board[secondRow, secondCol].Char = allowedChars[i];
+                m_Board[firstRow, firstCol].IsVisible = true;
+                m_Board[secondRow, secondCol].IsVisible = true;
             }
         }
-
 
         // This function checks if a string of cell is visible
         public bool CheckCellVisibility(string i_Cell)
@@ -90,28 +95,11 @@ namespace Ex02
             return m_Board[cellRow, cellColoum].IsVisible;
         }
 
-        // This function is a utility function of 'initializeBoard', we validate the two chosen cells
-        private bool validateCells(int[] rowsToPlaceCharAt, int[] colsToPlaceCharAt)
-        {
-            bool isValid = false;
-            int firstRowIndex = rowsToPlaceCharAt[0];
-            int secondRowIndex = rowsToPlaceCharAt[1];
-            int firstColIndex = colsToPlaceCharAt[0];
-            int secondColIndex = colsToPlaceCharAt[1];
-            char? firstChar = m_Board[firstRowIndex, firstColIndex].Char;
-            char? secondChar = m_Board[secondRowIndex, secondColIndex].Char;
-
-            if (firstChar == null && secondChar == null && (firstRowIndex != secondRowIndex || firstColIndex != secondColIndex))
-            {
-                isValid = true;
-            }
-
-            return isValid;
-        }
-        public static bool BoardHasEvenNumberOfCells(int io_BoardHeight, int io_BoardWidth)
+        public static bool checkIfBoardHasEvenNumberOfCells(int io_BoardHeight, int io_BoardWidth)
         {
             bool isEvenNumberOfCells = false;
-            if ((io_BoardHeight * io_BoardWidth) % k_DividedByTwo == 0)
+
+            if ((io_BoardHeight * io_BoardWidth) % 2 == 0)
             {
                 isEvenNumberOfCells = true;
             }
