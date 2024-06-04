@@ -12,8 +12,8 @@ namespace Ex02
         private int m_BoardHeight;
         private int m_BoardWidth;
         private int m_NumOfPairs;
-        private const char k_ConvertCharLetterToNumber = 'A';
-        private const char k_ConvertCharIntegerToNumber = '0';
+        private const char k_ALetter = 'A';
+        private const char k_ZeroLetter = '0';
 
 
         // Board CTOR 
@@ -76,26 +76,46 @@ namespace Ex02
                     rowsToPlaceCharAt[1] = rnd.Next(0, m_BoardHeight);
                     colsToPlaceCharAt[0] = rnd.Next(0, m_BoardWidth);
                     colsToPlaceCharAt[1] = rnd.Next(0, m_BoardWidth);
-                } while (m_Board[rowsToPlaceCharAt[0], colsToPlaceCharAt[0]].Char != null || m_Board[rowsToPlaceCharAt[1], colsToPlaceCharAt[1]].Char != null);
+                } while (!validateCells(rowsToPlaceCharAt, colsToPlaceCharAt));
 
                 m_Board[rowsToPlaceCharAt[0], colsToPlaceCharAt[0]].Char = allowedChars[i];
                 m_Board[rowsToPlaceCharAt[1], colsToPlaceCharAt[1]].Char = allowedChars[i];
             }
         }
-        public MatrixCell SetCellToVisibleOnBoardAndGetCellValue(string i_KeyPressed)
-        {
-            int cellColoum = i_KeyPressed[0] - k_ConvertCharLetterToNumber;           // Get the cell coloum
-            int cellRow = i_KeyPressed[1] - k_ConvertCharIntegerToNumber - 1;         // Get the cell row
-            MatrixCell cellValue = m_Board[cellRow, cellColoum];  //  Save the char of the cell
-            m_Board[cellRow, cellColoum].IsVisible = true;     //  update the cell to be exposed
 
-            return cellValue;
-        }
         public void SetCellToInvisibleOnBoard(string i_KeyPressed)
         {
-            int cellColoum = i_KeyPressed[0] - k_ConvertCharLetterToNumber;           // Get the cell coloum
-            int cellRow = i_KeyPressed[1] - k_ConvertCharIntegerToNumber - 1;                                     // Get the cell row (its the line -1 in the matrix)
+            int cellColoum = i_KeyPressed[0] - k_ALetter;           // Get the cell coloum
+            int cellRow = i_KeyPressed[1] - k_ZeroLetter - 1;                                     // Get the cell row (its the line -1 in the matrix)
             m_Board[cellRow, cellColoum].IsVisible = false;
+        }
+
+        // This function checks if a string of cell is visible
+        public bool CheckCellVisibility(string i_Cell)
+        {
+            int cellColoum = i_Cell[0] - k_ALetter;
+            int cellRow = i_Cell[1] - k_ZeroLetter - 1;
+
+            return m_Board[cellRow, cellColoum].IsVisible;
+        }
+
+        // This function is a utility function of 'initializeBoard', we validate the two chosen cells
+        private bool validateCells(int[] rowsToPlaceCharAt, int[] colsToPlaceCharAt)
+        {
+            bool isValid = false;
+            int firstRowIndex = rowsToPlaceCharAt[0];
+            int secondRowIndex = rowsToPlaceCharAt[1];
+            int firstColIndex = colsToPlaceCharAt[0];
+            int secondColIndex = colsToPlaceCharAt[1];
+            char? firstChar = m_Board[firstRowIndex, firstColIndex].Char;
+            char? secondChar = m_Board[secondRowIndex, secondColIndex].Char;
+
+            if (firstChar == null && secondChar == null && (firstRowIndex != secondRowIndex || firstColIndex != secondColIndex))
+            {
+                isValid = true;
+            }
+
+            return isValid;
         }
     }
 }

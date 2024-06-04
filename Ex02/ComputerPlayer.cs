@@ -9,8 +9,6 @@ namespace Ex02
     public class ComputerPlayer
     {
         private const int TwoSeconds = 2000;
-        private const char k_ConvertCharLetterToNumber = 'A';
-        private const char k_ConvertCharIntegerToNumber = '0';
         private int m_Points;
 
         public int Points
@@ -24,18 +22,18 @@ namespace Ex02
             Random rnd = new Random(); // Consider moving this outside the method if the method is called frequently
             char randomColumnForComputerPlayer;
             char randomRowForComputerPlayer;
-            MatrixCell cellValue;
+            MatrixCell cellValue = new MatrixCell(); // DELETE
 
             do  // To ensure we dont choose a visible cell
             {
-                randomColumnForComputerPlayer = (char)(k_ConvertCharLetterToNumber + rnd.Next(0, io_Board.BoardWidth));
-                randomRowForComputerPlayer = (char)(k_ConvertCharIntegerToNumber + rnd.Next(1, io_Board.BoardHeight));
+                randomColumnForComputerPlayer = (char)(IO.k_FirstColoumnLetter + rnd.Next(0, io_Board.BoardWidth));
+                randomRowForComputerPlayer = (char)(IO.k_ZeroDigit + rnd.Next(1, io_Board.BoardHeight));
                 io_KeyPressed = $"{randomColumnForComputerPlayer}{randomRowForComputerPlayer}";
-                cellValue = io_Board.SetCellToVisibleOnBoardAndGetCellValue(io_KeyPressed);
+                // cellValue = io_Board.SetCellToVisibleOnBoardAndGetCellValue(io_KeyPressed);
 
             } while (cellValue.IsVisible); // Keep randomizing until the chosen cell is invisible
 
-            Ex02.ConsoleUtils.Screen.Clear();// Clear the screen before getting the cell
+            IO.ClearScreen(); // Clear the screen before getting the cell
             IO.PrintBoard(io_Board);
 
             return cellValue;
@@ -58,7 +56,7 @@ namespace Ex02
                 System.Threading.Thread.Sleep(TwoSeconds);
                 io_Board.SetCellToInvisibleOnBoard(KeyPressed1);
                 io_Board.SetCellToInvisibleOnBoard(KeyPressed2);
-                Ex02.ConsoleUtils.Screen.Clear();
+                IO.ClearScreen();
                 IO.PrintBoard(io_Board);
             }
             else

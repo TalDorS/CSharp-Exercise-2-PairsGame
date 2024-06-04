@@ -8,10 +8,10 @@ namespace Ex02
 {
     public class HumanPlayer
     {
-        private const int TwoSeconds = 2000;
+        private const int k_TwoSeconds = 2000;
         private string m_Name;
         private int m_Points;
-      
+
         public HumanPlayer(string i_Name)
         {
             m_Name = i_Name;
@@ -29,54 +29,52 @@ namespace Ex02
             set { m_Name = value; }
         } 
 
-        private MatrixCell makeSingleTurn(Board io_Board, out string io_KeyPressed)
+        private int[] getCellAndTurnItVisible(Board io_Board)
         {
-            MatrixCell cellValue;
-            do  // To ensure we dont choose a visible cell
-            {
-                io_KeyPressed = IO.GetCell(io_Board.BoardHeight, io_Board.BoardWidth);
-                cellValue = io_Board.SetCellToVisibleOnBoardAndGetCellValue(io_KeyPressed);
+            int[] cellCoordinates = new int[2];
+            string cellString;
 
-                if (cellValue.IsVisible)
-                {
-                    Console.WriteLine("You chose a visible cell. Choose a different cell.");
-                }
+            cellString = IO.GetCellFromPlayer(this, io_Board);
+            cellCoordinates[0] = cellString[1] - IO.k_ZeroDigit - 1;
+            cellCoordinates[1] = cellString[0] - IO.k_FirstColoumnLetter;
+            io_Board.BoardMatrix[cellCoordinates[0], cellCoordinates[1]].IsVisible = true;
 
-            } while (cellValue.IsVisible);
-
-            Ex02.ConsoleUtils.Screen.Clear();// Clear the screen before getting the cell
-            IO.PrintBoard(io_Board);
-
-            return cellValue;
+            return cellCoordinates;
         }
         public bool MakeTurn(Board io_Board)
         {
-            char? firstChoiceCellValue = makeSingleTurn(io_Board,out string KeyPressed1).Char; // First choice for the human player
-            char? secondChoiceCellValue;
-            string KeyPressed2;
+            int[] firstCellCoordinates;
+            int[] secondCellCoordinates;
             bool didSucceedTurn = false; // To check if player wins round
 
-            do
-            {
-                secondChoiceCellValue = makeSingleTurn(io_Board, out KeyPressed2).Char; // Second choice for the human player
-                if (KeyPressed2 == KeyPressed1)
-                {
-                    Console.WriteLine("You chose the same cell again. Choose a different cell.");
-                }
-            } while (KeyPressed2 == KeyPressed1); // Check if second choice is equal to first choice, if so, repeat second move
+            // Make first cell choice
+            firstCellCoordinates = getCellAndTurnItVisible(io_Board); // First choice for the human player
 
-            if (firstChoiceCellValue != secondChoiceCellValue)
+            // Clear board
+            IO.ClearScreen();
+            IO.PrintBoard(io_Board);
+
+            // Make second cell choice
+            secondCellCoordinates = getCellAndTurnItVisible(io_Board); // Second choice for the human player
+
+            // Clear board
+            IO.ClearScreen();
+            IO.PrintBoard(io_Board);
+
+            // Compare both choices' chars
+            if (io_Board.BoardMatrix[firstCellCoordinates[0], firstCellCoordinates[1]].Char != io_Board.BoardMatrix[secondCellCoordinates[0], secondCellCoordinates[1]].Char)
             {
-                System.Threading.Thread.Sleep(TwoSeconds);      
-                io_Board.SetCellToInvisibleOnBoard(KeyPressed1);
-                io_Board.SetCellToInvisibleOnBoard(KeyPressed2);
-                Ex02.ConsoleUtils.Screen.Clear();
-                IO.PrintBoard(io_Board);
+                // Sleep for two seconds
+                System.Threading.Thread.Sleep(k_TwoSeconds);
+
+                // Turn first and second choices to invisible
+                io_Board.BoardMatrix[firstCellCoordinates[0], firstCellCoordinates[1]].IsVisible = false;
+                io_Board.BoardMatrix[secondCellCoordinates[0], secondCellCoordinates[1]].IsVisible = false;
             }
             else
             {
                 m_Points++;
-                io_Board.NumOfPairs--;          // The number of pairs 
+                io_Board.NumOfPairs--; 
                 didSucceedTurn = true;// We want the player to play again in the next round
             }
 

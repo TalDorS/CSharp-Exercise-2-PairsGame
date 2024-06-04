@@ -12,23 +12,26 @@ namespace Ex02
     {
         private const string k_PVPModeInput = "1";
         private const string k_PVCModeInput = "2";
+        private const string k_YChar = "Y";
+        private const string k_NChar = "N";
         private const int k_MinBoardHeightAndWidth = 4;
         private const int k_MaxBoardHeightAndWidth = 6;
         private const int k_AllowedCellInputLength = 2;
-        private const char k_FirstColoumnLetter = 'A';
-        private const char k_FirstRowDigit = '1';
+        public const char k_FirstColoumnLetter = 'A';
+        public const char k_FirstRowDigit = '1';
+        public const char k_ZeroDigit = '0';
         private const string k_ExitGame = "Q";
 
 
         // Ask for the player's name, and check input integrity
-        public static string GetPlayerName()
+        public static string GetPlayerName(string currentPlayer)
         {
             string playerName = string.Empty;
             bool nameIntegrity = false;
 
             do
             {
-                Console.WriteLine("Please enter your name: ");
+                Console.WriteLine(string.Format(("Please enter {0} player's name: "), currentPlayer));
                 playerName = Console.ReadLine();
             } while (nameIntegrity); // TODO: Check for input integrity
 
@@ -50,20 +53,6 @@ namespace Ex02
             } while (!checkGameModeValidity(chosenMod, out eChosenMod));
 
             return eChosenMod;
-        }
-
-        // Ask for the second player's name, and check input integrity
-        public static string GetSecondPlayerName(PairsGame.eGameMode i_ChosenMode)
-        {
-            string playerName = null;
-
-            if (i_ChosenMode == eGameMode.PlayerVsPlayer)
-            {
-                playerName = IO.GetPlayerName();
-            }
-
-
-            return playerName;
         }
 
         // Check for game mode input integrity
@@ -145,7 +134,6 @@ namespace Ex02
         // TODO: MAKE PRETTIER CODE
         public static void PrintBoard(Board i_Board)
         {
-            Ex02.ConsoleUtils.Screen.Clear();
             Console.Write("  "); // For row numbers alignment
             // Printing the top line of letters
             for (int i = 0; i < i_Board.BoardWidth; i++)
@@ -194,13 +182,13 @@ namespace Ex02
         }
 
         // This function asks a player for the cell he chooses
-        public static string GetCell(int i_BoardHeight, int i_BoardWidth)
+        public static string GetCellFromPlayer(HumanPlayer i_CurrentPlayer, Board i_Board)
         {
             string chosenCell;
 
             do
             {
-                Console.WriteLine("Please enter cell (ex. B4)");
+                Console.WriteLine($"{i_CurrentPlayer.Name}, please enter cell (ex. B4)");
                 chosenCell = Console.ReadLine();
 
                 if(chosenCell.ToUpper() == k_ExitGame)      // Exit game if Q is pressed
@@ -208,17 +196,17 @@ namespace Ex02
                     Environment.Exit(1);
                 }
 
-            } while (!checkCellInputValidity(chosenCell, i_BoardHeight, i_BoardWidth));
+            } while (!checkCellInputValidity(chosenCell, i_Board));
 
             return chosenCell;
         }
 
         // This function checks the board cell input validity
-        private static bool checkCellInputValidity(string i_CellInput, int i_BoardHeight, int i_BoardWidth)
+        private static bool checkCellInputValidity(string i_CellInput, Board i_Board)
         {
             bool isValid = false;
-            char lastLetterInCols = (char)(k_FirstColoumnLetter + (i_BoardWidth - 1));
-            char lastDigitInRows = (char)(k_FirstRowDigit + (i_BoardHeight - 1));
+            char lastLetterInCols = (char)(k_FirstColoumnLetter + (i_Board.BoardWidth - 1));
+            char lastDigitInRows = (char)(k_FirstRowDigit + (i_Board.BoardHeight - 1));
 
             if (i_CellInput.Length != k_AllowedCellInputLength)
             {
@@ -236,9 +224,91 @@ namespace Ex02
             {
                 Console.WriteLine("Cell doesn't exist in the board!");
             }
+            else if (i_Board.CheckCellVisibility(i_CellInput))
+            {
+                Console.WriteLine("You chose a visible cell. Choose a different cell.");
+            }
             else
             {
                 isValid = true;
+            }
+
+            return isValid;
+        }
+        // This function clears the screen
+        public static void ClearScreen()
+        {
+            Ex02.ConsoleUtils.Screen.Clear();
+        }
+
+        // this function prints the winner and final score
+        public static void PrintWinnerAndScores(HumanPlayer firstPlayer, HumanPlayer secondPlayer, ComputerPlayer computerPlayer, PairsGame.eGameMode i_GameMode)
+        {
+            // Clear screen
+            ClearScreen();
+
+            // Print winner and scores
+            if (i_GameMode == PairsGame.eGameMode.PlayerVsPlayer)
+            {
+                // Get The winner
+                HumanPlayer winnerPlayer = firstPlayer.Points > secondPlayer.Points ? firstPlayer : secondPlayer;
+
+                // Print winner message
+                Console.WriteLine($"The Winner Is {winnerPlayer.Name}!");
+
+                // Print final scores
+                Console.WriteLine($"{secondPlayer.Name} finished with {secondPlayer.Points} points!");
+            }
+            else
+            {
+                // Print winner message
+                if (firstPlayer.Points > computerPlayer.Points)
+                {
+                    Console.WriteLine($"The Winner Is {firstPlayer.Name}!");
+                }
+                else
+                {
+                    Console.WriteLine($"The Winner Is The Computer Player!");
+                }
+
+                // Print final scores
+                Console.WriteLine($"Computer player finished with {secondPlayer.Points} points!");
+            }
+            Console.WriteLine($"{firstPlayer.Name} finished with {firstPlayer.Points} points!");
+        }
+
+        // This function asks the player for another round
+        public static bool AskPlayerForAnotherRound()
+        {
+            bool isQuit = false;
+            string response;
+
+            do
+            {
+                Console.WriteLine("Would you like to play another round? Type y for yes, and n for no");
+                response = Console.ReadLine();
+            } while (!validateResponse(response));
+
+            if (response.ToUpper() == k_NChar)
+            {
+                isQuit = true;
+            }
+
+            return isQuit;
+        }
+
+        // This function checks the validity of the response in the function 'AskPlayerForAnotherRound'
+        private static bool validateResponse(string response)
+        {
+            bool isValid = false;
+
+            if(response.ToUpper() == k_YChar || response.ToUpper() == k_NChar)
+            {
+                isValid = true;
+            }
+            else
+            {
+                Console.WriteLine("Invalid character or string");
             }
 
             return isValid;
