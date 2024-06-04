@@ -14,7 +14,7 @@ namespace Ex02
         private int m_NumOfPairs;
         private const char k_ALetter = 'A';
         private const char k_ZeroLetter = '0';
-
+        private const int k_DividedByTwo = 2;
 
         // Board CTOR 
         public Board(int i_BoardHeight, int i_BoardWidth)
@@ -35,23 +35,20 @@ namespace Ex02
             } 
             set 
             {
-                m_NumOfPairs= value;
+                m_NumOfPairs = value;
             } 
         }
           
-        // Properties of matrix cell
         public MatrixCell[,] BoardMatrix
         {
             get { return m_Board; }
         }
-
-        // Get board height
+        
         public int BoardHeight
         {
             get { return m_BoardHeight; }
         }
 
-        // Get board width
         public int BoardWidth
         {
             get { return m_BoardWidth; }
@@ -83,12 +80,6 @@ namespace Ex02
             }
         }
 
-        public void SetCellToInvisibleOnBoard(string i_KeyPressed)
-        {
-            int cellColoum = i_KeyPressed[0] - k_ALetter;           // Get the cell coloum
-            int cellRow = i_KeyPressed[1] - k_ZeroLetter - 1;                                     // Get the cell row (its the line -1 in the matrix)
-            m_Board[cellRow, cellColoum].IsVisible = false;
-        }
 
         // This function checks if a string of cell is visible
         public bool CheckCellVisibility(string i_Cell)
@@ -116,6 +107,16 @@ namespace Ex02
             }
 
             return isValid;
+        }
+        public static bool BoardHasEvenNumberOfCells(int io_BoardHeight, int io_BoardWidth)
+        {
+            bool isEvenNumberOfCells = false;
+            if ((io_BoardHeight * io_BoardWidth) % k_DividedByTwo == 0)
+            {
+                isEvenNumberOfCells = true;
+            }
+
+            return isEvenNumberOfCells;
         }
     }
 }

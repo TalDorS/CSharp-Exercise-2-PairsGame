@@ -4,23 +4,23 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Ex02.Player;
 
 namespace Ex02
 {
     public class PairsGame
     {
-        private string k_FirstPlayerMessage = "first";
-        private string k_SecondPlayerMessage = "second";
-        private HumanPlayer m_FirstPlayer;
-        private HumanPlayer m_SecondPlayer;
-        private ComputerPlayer m_ComputerPlayer;
+        private const string k_FirstPlayerMessage = "first";
+        private const string k_SecondPlayerMessage = "second";
+        private Player m_FirstPlayer;
+        private Player m_SecondPlayer;
         private Board m_GameBoard;
         private eGameMode m_GameMode;
 
         public enum eGameMode
         {
             PlayerVsPlayer,
-            PlayerVsComputer
+            PlayerVsComputer,
         }
 
         // First game running function
@@ -40,7 +40,7 @@ namespace Ex02
                 startGameLoop();
 
                 // Print winner and final score
-                IO.PrintWinnerAndScores(m_FirstPlayer, m_SecondPlayer, m_ComputerPlayer, m_GameMode);
+                IO.PrintWinnerAndScores(m_FirstPlayer, m_SecondPlayer);
 
                 // Ask the player if he wants another round
                 isQuit = IO.AskPlayerForAnotherRound();
@@ -67,8 +67,7 @@ namespace Ex02
 
                 if (isFirstPlayerTurn)
                 {
-                    // add here a print maybe to announce its player 1 turn
-                    isChangedPlayer = m_FirstPlayer.MakeTurn(m_GameBoard);
+                    isChangedPlayer = m_FirstPlayer.MakeHumanTurn(m_GameBoard);
                     if (!isChangedPlayer)
                     {
                         isFirstPlayerTurn = false;
@@ -76,18 +75,17 @@ namespace Ex02
                 }
                 else
                 {
-                    // add here a print maybe to announce its player 2 turn
-                    if (m_GameMode == eGameMode.PlayerVsPlayer)
+                    if (m_SecondPlayer.PlayerType==Player.ePlayerType.HumanPlayer)// If the player is human
                     {
-                        isChangedPlayer = m_SecondPlayer.MakeTurn(m_GameBoard);
+                        isChangedPlayer = m_SecondPlayer.MakeHumanTurn(m_GameBoard);
                         if (!isChangedPlayer)
                         {
                             isFirstPlayerTurn = true;
                         }
                     }
-                    else
+                    else// If player is computer
                     {
-                        isChangedPlayer = m_ComputerPlayer.MakeTurn(m_GameBoard);
+                        isChangedPlayer = m_SecondPlayer.MakeComputerTurn(m_GameBoard);
                         if (!isChangedPlayer)
                         {
                             isFirstPlayerTurn = true;
@@ -101,7 +99,7 @@ namespace Ex02
         }
 
         // This function initializes the players, game mode and the board
-        public void initializeGameBoard()
+        private void initializeGameBoard()
         {
             int boardHeight;
             int boardWidth;
@@ -120,11 +118,11 @@ namespace Ex02
         private void initializePlayersAndMode()
         {
             string firstPlayerName;
-            string secondPlayerName = null;
+            string secondPlayerName;
 
             // Ask the first player for his name
             firstPlayerName = IO.GetPlayerName(k_FirstPlayerMessage);
-            m_FirstPlayer = new HumanPlayer(firstPlayerName);
+            m_FirstPlayer = new Player(firstPlayerName,Player.ePlayerType.HumanPlayer);
 
             // Get game mode from the computer (1: Player vs player, 2: Player vs computer)
             m_GameMode = IO.GetGameMode();
@@ -133,11 +131,12 @@ namespace Ex02
             if (m_GameMode == eGameMode.PlayerVsPlayer)
             {
                 secondPlayerName = IO.GetPlayerName(k_SecondPlayerMessage);
-                m_SecondPlayer = new HumanPlayer(secondPlayerName);
+                m_SecondPlayer = new Player(secondPlayerName, Player.ePlayerType.HumanPlayer);
+                //set the player mode for player two to be human
             }
             else
             {
-                m_ComputerPlayer = new ComputerPlayer();
+                m_SecondPlayer = new Player(null,Player.ePlayerType.ComputerPlayer);
             }
         }
 
@@ -145,14 +144,7 @@ namespace Ex02
         private void resetPlayersPoints()
         {
             m_FirstPlayer.Points = 0;
-            if(m_GameMode == eGameMode.PlayerVsPlayer) 
-            {
-                m_SecondPlayer.Points = 0;
-            }
-            else
-            {
-                m_ComputerPlayer.Points = 0;
-            }
+            m_SecondPlayer.Points = 0; 
         }
     }
 }

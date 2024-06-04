@@ -102,14 +102,14 @@ namespace Ex02
             bool isValid = false;
             bool firstParse = int.TryParse(i_HeightInput, out o_BoardHeight);
             bool secondParse = int.TryParse(i_WidthInput, out o_BoardWidth);
-
+           
             // Check if both parses were successful, and act accordingly   
             if (firstParse && secondParse)
             {
                 if (o_BoardHeight >= k_MinBoardHeightAndWidth && o_BoardHeight <= k_MaxBoardHeightAndWidth && o_BoardWidth >= k_MinBoardHeightAndWidth && o_BoardWidth <= k_MaxBoardHeightAndWidth)
                 {
                     // Check if even amount of cells in board
-                    if ((o_BoardHeight * o_BoardWidth) % 2 == 0)
+                    if (Board.BoardHasEvenNumberOfCells(o_BoardHeight, o_BoardWidth))
                     {
                         isValid = true;
                     }
@@ -182,7 +182,7 @@ namespace Ex02
         }
 
         // This function asks a player for the cell he chooses
-        public static string GetCellFromPlayer(HumanPlayer i_CurrentPlayer, Board i_Board)
+        public static string GetCellFromPlayer(Player i_CurrentPlayer, Board i_Board)
         {
             string chosenCell;
 
@@ -241,37 +241,21 @@ namespace Ex02
             Ex02.ConsoleUtils.Screen.Clear();
         }
 
-        // this function prints the winner and final score
-        public static void PrintWinnerAndScores(HumanPlayer firstPlayer, HumanPlayer secondPlayer, ComputerPlayer computerPlayer, PairsGame.eGameMode i_GameMode)
+        // This function prints the winner and final score
+        public static void PrintWinnerAndScores(Player firstPlayer, Player secondPlayer)
         {
             // Clear screen
             ClearScreen();
+            Player winnerPlayer = firstPlayer.Points > secondPlayer.Points ? firstPlayer : secondPlayer;
 
-            // Print winner and scores
-            if (i_GameMode == PairsGame.eGameMode.PlayerVsPlayer)
+            Console.WriteLine($"The Winner Is {winnerPlayer.Name}!");
+
+            if (secondPlayer.PlayerType == Player.ePlayerType.HumanPlayer)
             {
-                // Get The winner
-                HumanPlayer winnerPlayer = firstPlayer.Points > secondPlayer.Points ? firstPlayer : secondPlayer;
-
-                // Print winner message
-                Console.WriteLine($"The Winner Is {winnerPlayer.Name}!");
-
-                // Print final scores
                 Console.WriteLine($"{secondPlayer.Name} finished with {secondPlayer.Points} points!");
             }
             else
             {
-                // Print winner message
-                if (firstPlayer.Points > computerPlayer.Points)
-                {
-                    Console.WriteLine($"The Winner Is {firstPlayer.Name}!");
-                }
-                else
-                {
-                    Console.WriteLine($"The Winner Is The Computer Player!");
-                }
-
-                // Print final scores
                 Console.WriteLine($"Computer player finished with {secondPlayer.Points} points!");
             }
             Console.WriteLine($"{firstPlayer.Name} finished with {firstPlayer.Points} points!");
