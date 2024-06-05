@@ -300,7 +300,7 @@ namespace Ex02
         // This function prints that it's the computers turn
         public static void PrintComputersTurnMessage()
         {
-            Console.WriteLine("Computer's turn:");
+            Console.WriteLine("Computer's turn");
         }
     }
 }
