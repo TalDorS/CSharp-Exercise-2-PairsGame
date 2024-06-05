@@ -17,7 +17,7 @@ namespace Ex02
         public enum ePlayerType
         {
             HumanPlayer,
-            ComputerPlayer,
+            ComputerPlayer
         }
 
         public ePlayerType PlayerType

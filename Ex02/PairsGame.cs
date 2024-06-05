@@ -21,7 +21,7 @@ namespace Ex02
         public enum eGameMode
         {
             PlayerVsPlayer,
-            PlayerVsComputer,
+            PlayerVsComputer
         }
 
         // First game running function
