@@ -180,7 +180,6 @@ namespace Ex02
             if (!m_UnmatchedCells.ContainsKey((char)firstChoiceCellValue.Char))
             {
                 m_UnmatchedCells[(char)firstChoiceCellValue.Char] = new List<string>();
-
             }
 
             if (!m_UnmatchedCells[(char)firstChoiceCellValue.Char].Contains(keyPressed1))
@@ -237,7 +236,7 @@ namespace Ex02
             removeVisibleCellsFromUnmatchedCells(io_Board);     //update the m_UnmatchedCells list if chars are found by component
             return didSucceedTurn;
         }
-        private void removeVisibleCellsFromUnmatchedCells(Board io_Board)
+        private void removeVisibleCellsFromUnmatchedCells(Board i_Board)
         {
             var keysToRemove = new List<char>();
 
@@ -251,7 +250,7 @@ namespace Ex02
                 {
                     int cellColoum = position[0] - IO.k_FirstColoumnLetter;
                     int cellRow = position[1] - IO.k_ZeroDigit - 1;
-                    if (io_Board.BoardMatrix[cellRow, cellColoum].IsVisible)
+                    if (i_Board.BoardMatrix[cellRow, cellColoum].IsVisible)
                     {
                         positionsToRemove.Add(position);
                     }
