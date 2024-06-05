@@ -12,7 +12,7 @@ namespace Ex02
         private string m_Name;
         private int m_Points;
         private ePlayerType m_PlayerType;
-        private Dictionary<char, List<string>> m_UnmatchedCells = new Dictionary<char, List<string>>();
+        private Dictionary<char, List<string>> m_UnmatchedCells = new Dictionary<char, List<string>>();     //a dictonary to monitor the cells the computer chose before and save their data for future moves
 
         public enum ePlayerType
         {
@@ -139,6 +139,10 @@ namespace Ex02
                             }
                         }
                     }
+                    if (cellFound)
+                    {
+                        break;
+                    }
                 }
             }
 
@@ -172,7 +176,6 @@ namespace Ex02
 
         public bool MakeComputerTurn(Board io_Board)
         {
-            IO.ClearScreen();
             IO.PrintComputersTurnMessage();
             bool didSucceedTurn = false; // To check if player wins round
             MatrixCell firstChoiceCellValue = makeSingleTurnForComputerPlayer(io_Board, out string keyPressed1); // First choice for the human player
