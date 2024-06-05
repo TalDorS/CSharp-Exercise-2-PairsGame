@@ -56,33 +56,30 @@ namespace Ex02
             Random rnd = new Random();
             char[] allowedChars = { 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
             m_NumOfPairs = (m_BoardHeight * m_BoardWidth) / 2;
+            bool[,] filledCells = new bool[m_BoardHeight, m_BoardWidth];
 
-            List<int> cellIndices = new List<int>();
-
-            // Fill the list with all possible cell indices
-            for (int i = 0; i < m_BoardHeight * m_BoardWidth; i++)
-            {
-                cellIndices.Add(i);
-            }
-
-            // Shuffle the list of cell indices
-            cellIndices = cellIndices.OrderBy(x => rnd.Next()).ToList();
-
-            // Place the characters
             for (int i = 0; i < m_NumOfPairs; i++)
             {
-                int firstIndex = cellIndices[i * 2];
-                int secondIndex = cellIndices[i * 2 + 1];
+                int[] rowsToPlaceCharAt = new int[2];
+                int[] colsToPlaceCharAt = new int[2];
 
-                int firstRow = firstIndex / m_BoardWidth;
-                int firstCol = firstIndex % m_BoardWidth;
-                int secondRow = secondIndex / m_BoardWidth;
-                int secondCol = secondIndex % m_BoardWidth;
+                for (int j = 0; j < 2; j++)
+                {
+                    int row, col;
 
-                m_Board[firstRow, firstCol].Char = allowedChars[i];
-                m_Board[secondRow, secondCol].Char = allowedChars[i];
-                m_Board[firstRow, firstCol].IsVisible = true;
-                m_Board[secondRow, secondCol].IsVisible = true;
+                    do
+                    {
+                        row = rnd.Next(0, m_BoardHeight);
+                        col = rnd.Next(0, m_BoardWidth);
+                    } while (filledCells[row, col]);
+
+                    rowsToPlaceCharAt[j] = row;
+                    colsToPlaceCharAt[j] = col;
+                    filledCells[row, col] = true;
+                }
+
+                m_Board[rowsToPlaceCharAt[0], colsToPlaceCharAt[0]].Char = allowedChars[i];
+                m_Board[rowsToPlaceCharAt[1], colsToPlaceCharAt[1]].Char = allowedChars[i];
             }
         }
 

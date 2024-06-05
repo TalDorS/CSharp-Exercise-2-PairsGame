@@ -21,7 +21,7 @@ namespace Ex02
         public const char k_FirstColoumnLetter = 'A';
         public const char k_FirstRowDigit = '1';
         public const char k_ZeroDigit = '0';
-        private const string k_ExitGame = "Q";
+        public const string k_ExitGame = "Q";
 
         // Ask for the player's name, and check input integrity
         public static string GetPlayerName(string currentPlayer)
@@ -194,12 +194,6 @@ namespace Ex02
             {
                 Console.WriteLine($"{i_CurrentPlayer.Name}, please enter cell (ex. B4)");
                 chosenCell = Console.ReadLine();
-
-                if(chosenCell.ToUpper() == k_ExitGame)
-                {
-                    Environment.Exit(1);
-                }
-
             } while (!checkCellInputValidity(chosenCell, i_Board));
 
             return chosenCell;
@@ -212,7 +206,11 @@ namespace Ex02
             char lastLetterInCols = (char)(k_FirstColoumnLetter + (i_Board.BoardWidth - 1));
             char lastDigitInRows = (char)(k_FirstRowDigit + (i_Board.BoardHeight - 1));
 
-            if (i_CellInput.Length != k_AllowedCellInputLength)
+            if (i_CellInput.ToUpper() == k_ExitGame)
+            {
+                isValid = true;
+            }
+            else if (i_CellInput.Length != k_AllowedCellInputLength)
             {
                 Console.WriteLine("Cell input must contain 2 letters!");
             }
@@ -297,6 +295,12 @@ namespace Ex02
         public static void Sleep2Seconds()
         {
             System.Threading.Thread.Sleep(k_TwoSeconds);
+        }
+
+        // This function prints that it's the computers turn
+        public static void PrintComputersTurnMessage()
+        {
+            Console.WriteLine("Computer's turn:");
         }
     }
 }

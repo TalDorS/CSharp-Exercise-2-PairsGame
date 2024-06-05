@@ -28,6 +28,7 @@ namespace Ex02
         public void RunGame()
         {
             bool isQuit = false;
+            bool isPressedQ = false;
 
             // Initialize players and mode
             initializePlayersAndMode();
@@ -38,7 +39,12 @@ namespace Ex02
                 initializeGameBoard();
 
                 // Initiate main game loop
-                startGameLoop();
+                startGameLoop(out isPressedQ);
+
+                if(isPressedQ)
+                {
+                    break;
+                }
 
                 // Print winner and final score
                 IO.PrintWinnerAndScores(m_FirstPlayer, m_SecondPlayer);
@@ -49,17 +55,19 @@ namespace Ex02
                 // Reset player's points
                 if (!isQuit)
                 {
-                    resetPlayersPoints();
+                    m_FirstPlayer.Points = 0;
+                    m_SecondPlayer.Points = 0;
                     IO.ClearScreen();
                 }
             }
         }
 
         // This function has the main game loop
-        private void startGameLoop()
+        private void startGameLoop(out bool o_IsQPressed)
         {
             bool isChangedPlayer = false;
             bool isFirstPlayerTurn = true;
+            o_IsQPressed = false;
 
             while (m_GameBoard.NumOfPairs != 0)
             {
@@ -68,18 +76,28 @@ namespace Ex02
 
                 if (isFirstPlayerTurn)
                 {
-                    isChangedPlayer = m_FirstPlayer.MakeHumanTurn(m_GameBoard);
-                    if (!isChangedPlayer)
+                    isChangedPlayer = m_FirstPlayer.MakeHumanTurn(m_GameBoard, out o_IsQPressed);
+
+                    if (o_IsQPressed)
+                    {
+                        break;
+                    }
+                    else if (!isChangedPlayer)
                     {
                         isFirstPlayerTurn = false;
                     }
                 }
                 else
                 {
-                    if (m_SecondPlayer.PlayerType==Player.ePlayerType.HumanPlayer)// If the player is human
+                    if (m_SecondPlayer.PlayerType == Player.ePlayerType.HumanPlayer)// If the player is human
                     {
-                        isChangedPlayer = m_SecondPlayer.MakeHumanTurn(m_GameBoard);
-                        if (!isChangedPlayer)
+                        isChangedPlayer = m_SecondPlayer.MakeHumanTurn(m_GameBoard, out o_IsQPressed);
+
+                        if (o_IsQPressed)
+                        {
+                            break;
+                        }
+                        else if (!isChangedPlayer)
                         {
                             isFirstPlayerTurn = true;
                         }
@@ -87,6 +105,7 @@ namespace Ex02
                     else// If player is computer
                     {
                         isChangedPlayer = m_SecondPlayer.MakeComputerTurn(m_GameBoard);
+
                         if (!isChangedPlayer)
                         {
                             isFirstPlayerTurn = true;
@@ -139,13 +158,6 @@ namespace Ex02
             {
                 m_SecondPlayer = new Player(k_ComputerPlayerName, Player.ePlayerType.ComputerPlayer);
             }
-        }
-
-        // This function resets players' points
-        private void resetPlayersPoints()
-        {
-            m_FirstPlayer.Points = 0;
-            m_SecondPlayer.Points = 0; 
         }
     }
 }
