@@ -36,7 +36,7 @@ namespace Ex02
                 initializeGameBoard();
                 startGameLoop(out isPressedQ);
 
-                if(isPressedQ)
+                if (isPressedQ)
                 {
                     break;
                 }
@@ -102,7 +102,7 @@ namespace Ex02
                         }
                     }
                 }
-                
+
                 IO.ClearScreen();
             }
         }
@@ -111,7 +111,7 @@ namespace Ex02
         {
             int boardHeight;
             int boardWidth;
-            
+
             IO.GetBoardHeightAndWidth(out boardHeight, out boardWidth);
             m_GameBoard = new Board(boardHeight, boardWidth);
             IO.ClearScreen();
@@ -123,7 +123,7 @@ namespace Ex02
             string secondPlayerName;
 
             firstPlayerName = IO.GetPlayerName(k_FirstPlayerMessage);
-            m_FirstPlayer = new Player(firstPlayerName,Player.ePlayerType.HumanPlayer);
+            m_FirstPlayer = new Player(firstPlayerName, Player.ePlayerType.HumanPlayer);
             m_GameMode = IO.GetGameMode();
 
             if (m_GameMode == eGameMode.PlayerVsPlayer)

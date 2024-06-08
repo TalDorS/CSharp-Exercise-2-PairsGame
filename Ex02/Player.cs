@@ -68,9 +68,9 @@ namespace Ex02
 
         public bool MakeHumanTurn(Board io_Board, out bool o_IsQPressed)
         {
+            string firstCellString = getCellAndTurnItVisible(io_Board, out o_IsQPressed);
             string secondCellString = string.Empty;
             bool didSucceedTurn = false;
-            string firstCellString = getCellAndTurnItVisible(io_Board, out o_IsQPressed);
 
             if (!o_IsQPressed)
             {
@@ -117,7 +117,7 @@ namespace Ex02
                 firstChoiceCellValue = makeRandomTurnForComputerPlayer(io_Board, out firstCell);
                 secondChoiceCellValue = makeRandomTurnForComputerPlayer(io_Board, out secondCell);
 
-                if(firstChoiceCellValue.Char == secondChoiceCellValue.Char)
+                if (firstChoiceCellValue.Char == secondChoiceCellValue.Char)
                 {
                     m_KnownCells.Remove(firstCell);
                     m_KnownCells.Remove(secondCell);
@@ -152,14 +152,14 @@ namespace Ex02
             bool isPairFound = false;
             o_FirstCell = string.Empty;
             o_SecondCell = string.Empty;
-            
+
             foreach (var cell1 in m_KnownCells)
             {
                 foreach (var cell2 in m_KnownCells)
                 {
                     if (cell1.Key != cell2.Key && cell1.Value.Char == cell2.Value.Char && !cell1.Value.IsVisible && !cell2.Value.IsVisible && !isPairFound)
                     {
-                        if (!io_Board.CheckCellVisibility(cell1.Key) || !io_Board.CheckCellVisibility(cell2.Key)) // Special case in which player 1 has found the pair just before the computer
+                        if (!io_Board.CheckCellVisibility(cell1.Key) || !io_Board.CheckCellVisibility(cell2.Key)) 
                         {
                             o_FirstCell = cell1.Key;
                             o_SecondCell = cell2.Key;

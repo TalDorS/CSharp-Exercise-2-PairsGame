@@ -20,23 +20,23 @@ namespace Ex02
             m_Board = new MatrixCell[i_BoardHeight, i_BoardWidth];
             initializeBoardCells();
         }
-        public int NumOfPairs 
-        {  
-            get 
-            { 
+        public int NumOfPairs
+        {
+            get
+            {
                 return m_NumOfPairs;
-            } 
-            set 
+            }
+            set
             {
                 m_NumOfPairs = value;
-            } 
+            }
         }
-          
+
         public MatrixCell[,] BoardMatrix
         {
             get { return m_Board; }
         }
-        
+
         public int BoardHeight
         {
             get { return m_BoardHeight; }

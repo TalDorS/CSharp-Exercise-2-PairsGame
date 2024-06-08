@@ -136,7 +136,7 @@ namespace Ex02
                 Console.Write($"  {columnLetter} ");
             }
 
-            Console.WriteLine();
+            Console.Write(Environment.NewLine);
         }
 
         private static void printHorizontalSeparator(int i_BoardWidth)
@@ -149,7 +149,7 @@ namespace Ex02
             }
 
             Console.Write("=");
-            Console.WriteLine();
+            Console.Write(Environment.NewLine);
         }
 
         private static void printRow(Board i_Board, int i_RowIndex)
@@ -171,7 +171,7 @@ namespace Ex02
             }
 
             Console.Write(" |");
-            Console.WriteLine();
+            Console.Write(Environment.NewLine);
         }
 
         public static string GetCellFromPlayer(Player i_CurrentPlayer, Board i_Board)
