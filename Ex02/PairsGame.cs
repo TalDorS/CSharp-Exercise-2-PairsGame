@@ -24,21 +24,16 @@ namespace Ex02
             PlayerVsComputer
         }
 
-        // First game running function
         public void RunGame()
         {
             bool isQuit = false;
             bool isPressedQ = false;
 
-            // Initialize players and mode
             initializePlayersAndMode();
 
             while (!isQuit)
             {
-                // Initialize board
                 initializeGameBoard();
-
-                // Initiate main game loop
                 startGameLoop(out isPressedQ);
 
                 if(isPressedQ)
@@ -46,23 +41,19 @@ namespace Ex02
                     break;
                 }
 
-                // Print winner and final score
                 IO.PrintWinnerAndScores(m_FirstPlayer, m_SecondPlayer);
-
-                // Ask the player if he wants another round
                 isQuit = IO.AskPlayerForAnotherRound();
 
-                // Reset player's points
                 if (!isQuit)
                 {
                     m_FirstPlayer.Points = 0;
                     m_SecondPlayer.Points = 0;
+                    m_SecondPlayer.KnownCells.Clear();
                     IO.ClearScreen();
                 }
             }
         }
 
-        // This function has the main game loop
         private void startGameLoop(out bool o_IsQPressed)
         {
             bool isChangedPlayer = false;
@@ -71,7 +62,6 @@ namespace Ex02
 
             while (m_GameBoard.NumOfPairs != 0)
             {
-                // Print board at the start of the turn
                 IO.PrintBoard(m_GameBoard);
 
                 if (isFirstPlayerTurn)
@@ -89,7 +79,7 @@ namespace Ex02
                 }
                 else
                 {
-                    if (m_SecondPlayer.PlayerType == Player.ePlayerType.HumanPlayer)// If the player is human
+                    if (m_SecondPlayer.PlayerType == Player.ePlayerType.HumanPlayer)
                     {
                         isChangedPlayer = m_SecondPlayer.MakeHumanTurn(m_GameBoard, out o_IsQPressed);
 
@@ -102,7 +92,7 @@ namespace Ex02
                             isFirstPlayerTurn = true;
                         }
                     }
-                    else// If player is computer
+                    else
                     {
                         isChangedPlayer = m_SecondPlayer.MakeComputerTurn(m_GameBoard);
 
@@ -113,46 +103,33 @@ namespace Ex02
                     }
                 }
                 
-                // Clear screen at the end of this loop
                 IO.ClearScreen();
             }
         }
 
-        // This function initializes the players, game mode and the board
         private void initializeGameBoard()
         {
             int boardHeight;
             int boardWidth;
             
-            // Get height and width of board
             IO.GetBoardHeightAndWidth(out boardHeight, out boardWidth);
-
-            // Create new game board
             m_GameBoard = new Board(boardHeight, boardWidth);
-
-            // Clear the screen
             IO.ClearScreen();
         }
 
-        // This function initializes the players in the game
         private void initializePlayersAndMode()
         {
             string firstPlayerName;
             string secondPlayerName;
 
-            // Ask the first player for his name
             firstPlayerName = IO.GetPlayerName(k_FirstPlayerMessage);
             m_FirstPlayer = new Player(firstPlayerName,Player.ePlayerType.HumanPlayer);
-
-            // Get game mode from the computer (1: Player vs player, 2: Player vs computer)
             m_GameMode = IO.GetGameMode();
 
-            // If the game mode is pvp, get the name of the second player
             if (m_GameMode == eGameMode.PlayerVsPlayer)
             {
                 secondPlayerName = IO.GetPlayerName(k_SecondPlayerMessage);
                 m_SecondPlayer = new Player(secondPlayerName, Player.ePlayerType.HumanPlayer);
-                //set the player mode for player two to be human
             }
             else
             {

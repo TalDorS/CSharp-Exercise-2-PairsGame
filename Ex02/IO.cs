@@ -23,26 +23,20 @@ namespace Ex02
         public const char k_ZeroDigit = '0';
         public const string k_ExitGame = "Q";
 
-        // Ask for the player's name, and check input integrity
-        public static string GetPlayerName(string currentPlayer)
+        public static string GetPlayerName(string i_CurrentPlayerMessage)
         {
             string playerName = string.Empty;
-            bool nameIntegrity = false;
 
-            do
-            {
-                Console.WriteLine(string.Format(("Please enter {0} player's name: "), currentPlayer));
-                playerName = Console.ReadLine();
-            } while (nameIntegrity); // TODO: Check for input integrity
+            Console.WriteLine(string.Format(("Please enter {0} player's name: "), i_CurrentPlayerMessage));
+            playerName = Console.ReadLine();
 
             return playerName;
         }
 
-        // Ask the player for his wanted game mode, and check input integrity
         public static PairsGame.eGameMode GetGameMode()
         {
             PairsGame.eGameMode eChosenMod;
-            string chosenMod = null;
+            string chosenMod = string.Empty;
 
             do
             {
@@ -55,7 +49,6 @@ namespace Ex02
             return eChosenMod;
         }
 
-        // Check for game mode input integrity
         private static bool checkGameModeValidity(string i_ModeInput, out PairsGame.eGameMode o_Mode)
         {
             o_Mode = PairsGame.eGameMode.PlayerVsPlayer;
@@ -79,7 +72,6 @@ namespace Ex02
             return isValid;
         }
 
-        // Get board's height and width from user
         public static void GetBoardHeightAndWidth(out int io_BoardHeight, out int io_BoardWidth)
         {
             string heightInput = null;
@@ -96,7 +88,6 @@ namespace Ex02
             } while (!checkBoardHeightAndWidthValidity(heightInput, widthInput, out io_BoardHeight, out io_BoardWidth));
         }
 
-        // Check board height and width input for validity
         private static bool checkBoardHeightAndWidthValidity(string i_HeightInput, string i_WidthInput, out int io_BoardHeight, out int io_BoardWidth)
         {
             bool isValid = false;
@@ -111,7 +102,7 @@ namespace Ex02
             {
                 Console.WriteLine("Board's height or width input is invalid!");
             }
-            else if (!Board.checkIfBoardHasEvenNumberOfCells(io_BoardHeight, io_BoardWidth)) 
+            else if (!Board.CheckIfBoardHasEvenNumberOfCells(io_BoardHeight, io_BoardWidth)) 
             {
                 Console.WriteLine("Odd amount of cells in board is not allowed!");
             }
@@ -135,10 +126,9 @@ namespace Ex02
             }
         }
 
-        // This is a utility function for PrintBoard
         private static void printColumnHeaders(int i_BoardWidth)
         {
-            Console.Write("  "); // For row numbers alignment
+            Console.Write("  ");
 
             for (int i = 0; i < i_BoardWidth; i++)
             {
@@ -149,7 +139,6 @@ namespace Ex02
             Console.WriteLine();
         }
 
-        // This is a utility function for PrintBoard
         private static void printHorizontalSeparator(int i_BoardWidth)
         {
             Console.Write("  ");
@@ -163,7 +152,6 @@ namespace Ex02
             Console.WriteLine();
         }
 
-        // This is a utility function for PrintBoard
         private static void printRow(Board i_Board, int i_RowIndex)
         {
             Console.Write(i_RowIndex + 1);
@@ -171,6 +159,7 @@ namespace Ex02
             for (int j = 0; j < i_Board.BoardWidth; j++)
             {
                 Console.Write(" | ");
+
                 if (i_Board.BoardMatrix[i_RowIndex, j].IsVisible)
                 {
                     Console.Write(i_Board.BoardMatrix[i_RowIndex, j].Char);
@@ -185,7 +174,6 @@ namespace Ex02
             Console.WriteLine();
         }
 
-        // This function asks a player for the cell he chooses
         public static string GetCellFromPlayer(Player i_CurrentPlayer, Board i_Board)
         {
             string chosenCell;
@@ -199,7 +187,6 @@ namespace Ex02
             return chosenCell;
         }
 
-        // This function checks the board cell input validity
         private static bool checkCellInputValidity(string i_CellInput, Board i_Board)
         {
             bool isValid = false;
@@ -237,24 +224,30 @@ namespace Ex02
 
             return isValid;
         }
-        // This function clears the screen
+
         public static void ClearScreen()
         {
             Ex02.ConsoleUtils.Screen.Clear();
         }
 
-        // This function prints the winner and final score
         public static void PrintWinnerAndScores(Player i_FirstPlayer, Player i_SecondPlayer)
         {
-            Player winningPlayer = i_FirstPlayer.Points > i_SecondPlayer.Points ? i_FirstPlayer : i_SecondPlayer;
-
             ClearScreen();
-            Console.WriteLine(string.Format("The Winner Is {0}!", winningPlayer.Name));
+
+            if (i_FirstPlayer.Points == i_SecondPlayer.Points)
+            {
+                Console.WriteLine("We have a tie!");
+            }
+            else
+            {
+                Player winningPlayer = i_FirstPlayer.Points > i_SecondPlayer.Points ? i_FirstPlayer : i_SecondPlayer;
+                Console.WriteLine(string.Format("The Winner Is {0}!", winningPlayer.Name));
+            }
+
             Console.WriteLine(string.Format("{0} finished with {1} points!", i_FirstPlayer.Name, i_FirstPlayer.Points));
             Console.WriteLine(string.Format("{0} finished with {1} points!", i_SecondPlayer.Name, i_SecondPlayer.Points));
         }
 
-        // This function asks the player for another round
         public static bool AskPlayerForAnotherRound()
         {
             bool isQuit = false;
@@ -274,7 +267,6 @@ namespace Ex02
             return isQuit;
         }
 
-        // This function checks the validity of the response in the function 'AskPlayerForAnotherRound'
         private static bool validateResponse(string i_Response)
         {
             bool isValid = false;
@@ -291,13 +283,11 @@ namespace Ex02
             return isValid;
         }
 
-        // This function sleeps for 2 seconds
         public static void Sleep2Seconds()
         {
             System.Threading.Thread.Sleep(k_TwoSeconds);
         }
 
-        // This function prints that it's the computers turn
         public static void PrintComputersTurnMessage()
         {
             Console.WriteLine("Computer's turn");

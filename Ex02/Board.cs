@@ -12,10 +12,7 @@ namespace Ex02
         private int m_BoardHeight;
         private int m_BoardWidth;
         private int m_NumOfPairs;
-        private const char k_ALetter = 'A';
-        private const char k_ZeroLetter = '0';
 
-        // Board CTOR 
         public Board(int i_BoardHeight, int i_BoardWidth)
         {
             m_BoardHeight = i_BoardHeight;
@@ -50,13 +47,13 @@ namespace Ex02
             get { return m_BoardWidth; }
         }
 
-        // This board initializes the board cells
         private void initializeBoardCells()
         {
             Random rnd = new Random();
             char[] allowedChars = { 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
-            m_NumOfPairs = (m_BoardHeight * m_BoardWidth) / 2;
             bool[,] filledCells = new bool[m_BoardHeight, m_BoardWidth];
+
+            m_NumOfPairs = (m_BoardHeight * m_BoardWidth) / 2;
 
             for (int i = 0; i < m_NumOfPairs; i++)
             {
@@ -83,16 +80,15 @@ namespace Ex02
             }
         }
 
-        // This function checks if a string of cell is visible
         public bool CheckCellVisibility(string i_Cell)
         {
-            int cellColoum = i_Cell[0] - k_ALetter;
-            int cellRow = i_Cell[1] - k_ZeroLetter - 1;
+            int cellColoum = i_Cell[0] - IO.k_FirstColoumnLetter;
+            int cellRow = i_Cell[1] - IO.k_ZeroDigit - 1;
 
             return m_Board[cellRow, cellColoum].IsVisible;
         }
 
-        public static bool checkIfBoardHasEvenNumberOfCells(int io_BoardHeight, int io_BoardWidth)
+        public static bool CheckIfBoardHasEvenNumberOfCells(int io_BoardHeight, int io_BoardWidth)
         {
             bool isEvenNumberOfCells = false;
 
@@ -102,6 +98,22 @@ namespace Ex02
             }
 
             return isEvenNumberOfCells;
+        }
+
+        public void ChangeCellVisibilityByString(string i_KeyPressed, bool i_IsVisible)
+        {
+            int row = i_KeyPressed[1] - IO.k_FirstRowDigit;
+            int col = i_KeyPressed[0] - IO.k_FirstColoumnLetter;
+
+            BoardMatrix[row, col].IsVisible = i_IsVisible;
+        }
+
+        public MatrixCell GetCellWithString(string i_KeyPressed)
+        {
+            int row = i_KeyPressed[1] - IO.k_FirstRowDigit;
+            int col = i_KeyPressed[0] - IO.k_FirstColoumnLetter;
+
+            return this.BoardMatrix[row, col];
         }
     }
 }

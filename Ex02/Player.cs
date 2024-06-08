@@ -12,7 +12,7 @@ namespace Ex02
         private string m_Name;
         private int m_Points;
         private ePlayerType m_PlayerType;
-        private Dictionary<char, List<string>> m_UnmatchedCells = new Dictionary<char, List<string>>();     //a dictonary to monitor the cells the computer chose before and save their data for future moves
+        private Dictionary<string, MatrixCell> m_KnownCells = new Dictionary<string, MatrixCell>();
 
         public enum ePlayerType
         {
@@ -44,12 +44,15 @@ namespace Ex02
             set { m_Name = value; }
         }
 
-        private int[] getCellAndTurnItVisible(Board io_Board, out bool o_IsQPressed)
+        public Dictionary<string, MatrixCell> KnownCells
         {
-            int[] cellCoordinates = new int[k_NumOfTurns];
-            string cellString;
+            get { return m_KnownCells; }
+        }
+
+        private string getCellAndTurnItVisible(Board io_Board, out bool o_IsQPressed)
+        {
+            string cellString = IO.GetCellFromPlayer(this, io_Board);
             o_IsQPressed = false;
-            cellString = IO.GetCellFromPlayer(this, io_Board);
 
             if (cellString.ToUpper() == IO.k_ExitGame)
             {
@@ -57,227 +60,145 @@ namespace Ex02
             }
             else
             {
-                cellCoordinates[0] = cellString[1] - IO.k_ZeroDigit - 1;
-                cellCoordinates[1] = cellString[0] - IO.k_FirstColoumnLetter;
-                io_Board.BoardMatrix[cellCoordinates[0], cellCoordinates[1]].IsVisible = true;
+                io_Board.ChangeCellVisibilityByString(cellString, true);
             }
 
-            return cellCoordinates;
+            return cellString;
         }
 
         public bool MakeHumanTurn(Board io_Board, out bool o_IsQPressed)
         {
-            int[] firstCellCoordinates;
-            int[] secondCellCoordinates;
-            bool didSucceedTurn = false; // To check if player wins round
-
-            // Make first cell choice
-            firstCellCoordinates = getCellAndTurnItVisible(io_Board, out o_IsQPressed); // First choice for the human player
+            string secondCellString = string.Empty;
+            bool didSucceedTurn = false;
+            string firstCellString = getCellAndTurnItVisible(io_Board, out o_IsQPressed);
 
             if (!o_IsQPressed)
             {
-                // Clear board
+                IO.ClearScreen();
+                IO.PrintBoard(io_Board);
+                secondCellString = getCellAndTurnItVisible(io_Board, out o_IsQPressed);
                 IO.ClearScreen();
                 IO.PrintBoard(io_Board);
 
-                // Make second cell choice
-                secondCellCoordinates = getCellAndTurnItVisible(io_Board, out o_IsQPressed); // Second choice for the human player
-
-                // Clear board
-                IO.ClearScreen();
-                IO.PrintBoard(io_Board);
-
-                // Compare both choices' chars
-                if (io_Board.BoardMatrix[firstCellCoordinates[0], firstCellCoordinates[1]].Char != io_Board.BoardMatrix[secondCellCoordinates[0], secondCellCoordinates[1]].Char)
+                if (io_Board.GetCellWithString(firstCellString).Char != io_Board.GetCellWithString(secondCellString).Char)
                 {
-                    // Sleep for two seconds
                     IO.Sleep2Seconds();
-
-                    // Turn first and second choices to invisible
-                    io_Board.BoardMatrix[firstCellCoordinates[0], firstCellCoordinates[1]].IsVisible = false;
-                    io_Board.BoardMatrix[secondCellCoordinates[0], secondCellCoordinates[1]].IsVisible = false;
+                    io_Board.ChangeCellVisibilityByString(firstCellString, false);
+                    io_Board.ChangeCellVisibilityByString(secondCellString, false);
                 }
                 else
                 {
                     m_Points++;
                     io_Board.NumOfPairs--;
-                    didSucceedTurn = true;// We want the player to play again in the next round
+                    didSucceedTurn = true;
                 }
             }
 
             return didSucceedTurn;
         }
 
-        private MatrixCell makeSingleTurnForComputerPlayer(Board io_Board, out string o_KeyPressed)
+        public bool MakeComputerTurn(Board io_Board)
         {
-            Random rnd = new Random();
-            MatrixCell cellValue = new MatrixCell();
-            char randomColumnForComputerPlayer;
-            char randomRowForComputerPlayer;
-            bool cellFound = false;
-            o_KeyPressed = null;
+            bool didSucceedTurn = false;
+            string firstCell;
+            string secondCell;
+            MatrixCell firstChoiceCellValue;
+            MatrixCell secondChoiceCellValue;
 
-            if (m_UnmatchedCells.Count > 0)
+            bool isPairFound = lookForKnownPairs(io_Board, out firstCell, out secondCell);
+
+            if (isPairFound)
             {
-                foreach (var previousCellPosition in m_UnmatchedCells)
-                {
-                    if (previousCellPosition.Value.Count > 1)
-                    {
-                        foreach (var position in previousCellPosition.Value)
-                        {
-                            int cellColoum = position[0] - IO.k_FirstColoumnLetter; // Get the cell column
-                            int cellRow = position[1] - IO.k_ZeroDigit - 1; // Get the cell row
-
-                            if (!io_Board.BoardMatrix[cellRow, cellColoum].IsVisible)
-                            {
-                                o_KeyPressed = position;
-                                cellValue = io_Board.BoardMatrix[cellRow, cellColoum];
-                                io_Board.BoardMatrix[cellRow, cellColoum].IsVisible = true;
-                                cellValue.IsVisible = true;
-                                cellFound = true;
-                                break;
-                            }
-                        }
-                    }
-                    if (cellFound)
-                    {
-                        break;
-                    }
-                }
+                firstChoiceCellValue = io_Board.GetCellWithString(firstCell);
+                secondChoiceCellValue = io_Board.GetCellWithString(secondCell);
             }
-
-            if (!cellFound)
+            else
             {
-                do
-                {
-                    randomColumnForComputerPlayer = (char)(IO.k_FirstColoumnLetter + rnd.Next(0, io_Board.BoardWidth));
-                    randomRowForComputerPlayer = (char)(IO.k_ZeroDigit + rnd.Next(1, io_Board.BoardHeight));
-                    o_KeyPressed = $"{randomColumnForComputerPlayer}{randomRowForComputerPlayer}";                         // For comparing if computer got the same cell
-                    randomColumnForComputerPlayer = (char)(randomColumnForComputerPlayer - IO.k_FirstColoumnLetter);
-                    randomRowForComputerPlayer = (char)(randomRowForComputerPlayer - 1 - IO.k_ZeroDigit);
-                    cellValue = io_Board.BoardMatrix[(int)randomRowForComputerPlayer, (int)(randomColumnForComputerPlayer)];
-                } while (cellValue.IsVisible);  // To ensure we dont choose a visible cell
+                firstChoiceCellValue = makeRandomTurnForComputerPlayer(io_Board, out firstCell);
+                secondChoiceCellValue = makeRandomTurnForComputerPlayer(io_Board, out secondCell);
 
-                io_Board.BoardMatrix[(int)(randomRowForComputerPlayer), (int)(randomColumnForComputerPlayer)].IsVisible = true;
-                cellValue.IsVisible = true;
+                if(firstChoiceCellValue.Char == secondChoiceCellValue.Char)
+                {
+                    m_KnownCells.Remove(firstCell);
+                    m_KnownCells.Remove(secondCell);
+                }
             }
 
             IO.ClearScreen();
             IO.PrintBoard(io_Board);
-            return cellValue;
-        }
-
-        private void setCellToInvisibleOnBoard(Board io_Board, string i_KeyPressed)
-        {
-            int cellColoum = i_KeyPressed[0] - IO.k_FirstColoumnLetter;                                // Get the cell coloum
-            int cellRow = i_KeyPressed[1] - IO.k_ZeroDigit - 1;                                     // Get the cell row (its the line -1 in the matrix)
-            io_Board.BoardMatrix[cellRow, cellColoum].IsVisible = false;
-        }
-
-        public bool MakeComputerTurn(Board io_Board)
-        {
             IO.PrintComputersTurnMessage();
-            bool didSucceedTurn = false; // To check if player wins round
-            MatrixCell firstChoiceCellValue = makeSingleTurnForComputerPlayer(io_Board, out string keyPressed1); // First choice for the human player
-
-            if (!m_UnmatchedCells.ContainsKey((char)firstChoiceCellValue.Char))
-            {
-                m_UnmatchedCells[(char)firstChoiceCellValue.Char] = new List<string>();
-            }
-
-            if (!m_UnmatchedCells[(char)firstChoiceCellValue.Char].Contains(keyPressed1))
-            {
-                m_UnmatchedCells[(char)firstChoiceCellValue.Char].Add(keyPressed1);
-            }
-
-            MatrixCell secondChoiceCellValue = makeSingleTurnForComputerPlayer(io_Board, out string keyPressed2);
-
-            if (!m_UnmatchedCells.ContainsKey((char)secondChoiceCellValue.Char))
-            {
-                m_UnmatchedCells[(char)secondChoiceCellValue.Char] = new List<string>();
-            }
-
-            if (!m_UnmatchedCells[(char)secondChoiceCellValue.Char].Contains(keyPressed2))
-            {
-                m_UnmatchedCells[(char)secondChoiceCellValue.Char].Add(keyPressed2);
-            }
+            IO.Sleep2Seconds();
 
             if (firstChoiceCellValue.Char != secondChoiceCellValue.Char)
             {
-                IO.Sleep2Seconds();
-                setCellToInvisibleOnBoard(io_Board, keyPressed1);
-                setCellToInvisibleOnBoard(io_Board, keyPressed2);
+                io_Board.ChangeCellVisibilityByString(firstCell, false);
+                io_Board.ChangeCellVisibilityByString(secondCell, false);
                 IO.ClearScreen();
                 IO.PrintBoard(io_Board);
             }
             else
             {
                 m_Points++;
-                io_Board.NumOfPairs--;          // The number of pairs 
-                didSucceedTurn = true;// We want the player to play again in the next round
-
-                if (m_UnmatchedCells.ContainsKey((char)firstChoiceCellValue.Char))
-                {
-                    m_UnmatchedCells[(char)firstChoiceCellValue.Char].Remove(keyPressed1);
-
-                    if (m_UnmatchedCells[(char)firstChoiceCellValue.Char].Count == 0)
-                    {
-                        m_UnmatchedCells.Remove((char)firstChoiceCellValue.Char);
-                    }
-                }
-                if (m_UnmatchedCells.ContainsKey((char)secondChoiceCellValue.Char))
-                {
-                    m_UnmatchedCells[(char)secondChoiceCellValue.Char].Remove(keyPressed2);
-
-                    if (m_UnmatchedCells[(char)secondChoiceCellValue.Char].Count == 0)
-                    {
-                        m_UnmatchedCells.Remove((char)secondChoiceCellValue.Char);
-                    }
-                }
+                io_Board.NumOfPairs--;
+                didSucceedTurn = true;
             }
 
-            removeVisibleCellsFromUnmatchedCells(io_Board);     //update the m_UnmatchedCells list if chars are found by component
             return didSucceedTurn;
         }
-        private void removeVisibleCellsFromUnmatchedCells(Board i_Board)
+
+        private bool lookForKnownPairs(Board io_Board, out string o_FirstCell, out string o_SecondCell)
         {
-            var keysToRemove = new List<char>();
-
-            foreach (var previousCellPosition in m_UnmatchedCells)
+            List<string> keysToRemove = new List<string>();
+            bool isPairFound = false;
+            o_FirstCell = string.Empty;
+            o_SecondCell = string.Empty;
+            
+            foreach (var cell1 in m_KnownCells)
             {
-                // Create a list to store positions that need to be removed
-                var positionsToRemove = new List<string>();
-
-                // Iterate through positions in kvp.Value and check if they are visible
-                foreach (string position in previousCellPosition.Value)
+                foreach (var cell2 in m_KnownCells)
                 {
-                    int cellColoum = position[0] - IO.k_FirstColoumnLetter;
-                    int cellRow = position[1] - IO.k_ZeroDigit - 1;
-                    if (i_Board.BoardMatrix[cellRow, cellColoum].IsVisible)
+                    if (cell1.Key != cell2.Key && cell1.Value.Char == cell2.Value.Char && !cell1.Value.IsVisible && !cell2.Value.IsVisible && !isPairFound)
                     {
-                        positionsToRemove.Add(position);
+                        if (!io_Board.CheckCellVisibility(cell1.Key) || !io_Board.CheckCellVisibility(cell2.Key)) // Special case in which player 1 has found the pair just before the computer
+                        {
+                            o_FirstCell = cell1.Key;
+                            o_SecondCell = cell2.Key;
+                            io_Board.ChangeCellVisibilityByString(o_FirstCell, true);
+                            io_Board.ChangeCellVisibilityByString(o_SecondCell, true);
+                            keysToRemove.Add(cell1.Key);
+                            keysToRemove.Add(cell2.Key);
+                            isPairFound = true;
+                        }
                     }
                 }
-
-                // Remove positions that are visible
-                foreach (string positionToRemove in positionsToRemove)
-                {
-                    previousCellPosition.Value.Remove(positionToRemove);
-                }
-
-                // If all positions for the key are removed, add the key to keysToRemove list
-                if (previousCellPosition.Value.Count == 0)
-                {
-                    keysToRemove.Add(previousCellPosition.Key);
-                }
             }
 
-            // Remove keys that have no positions remaining
-            foreach (char key in keysToRemove)
+            foreach (var key in keysToRemove)
             {
-                m_UnmatchedCells.Remove(key);
+                m_KnownCells.Remove(key);
             }
 
+            return isPairFound;
+        }
+        private MatrixCell makeRandomTurnForComputerPlayer(Board io_Board, out string o_KeyPressed)
+        {
+            char randomColumnForComputerPlayer;
+            char randomRowForComputerPlayer;
+            MatrixCell cellValue;
+            Random rnd = new Random();
+
+            do
+            {
+                randomColumnForComputerPlayer = (char)(IO.k_FirstColoumnLetter + rnd.Next(0, io_Board.BoardWidth));
+                randomRowForComputerPlayer = (char)(IO.k_FirstRowDigit + rnd.Next(0, io_Board.BoardHeight));
+                o_KeyPressed = String.Format("{0}{1}", randomColumnForComputerPlayer, randomRowForComputerPlayer);
+                cellValue = io_Board.GetCellWithString(o_KeyPressed);
+            } while (cellValue.IsVisible);
+
+            io_Board.ChangeCellVisibilityByString(o_KeyPressed, true);
+            m_KnownCells[o_KeyPressed] = cellValue;
+
+            return cellValue;
         }
     }
 }
